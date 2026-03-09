@@ -1,11 +1,11 @@
 // Autor: Quirino González Johann David
-// CARACTERES
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <fstream>    // Cabecera o biblioteca que permite trabajar con archivos
-#include <time.h>     // Cabecera que permite contabilizar el tiempo de ejecucion
+#include <fstream>
+#include <time.h>
 using namespace std;
 
 
@@ -14,52 +14,50 @@ int i = 0;
 int j = 0;
 int opcion = 0;
 int repeticion = 0;
-char caracterBuscar;
-char aux;
-
+int numeroBuscar;
+int aux;
+int sumPar;
+int sumImpar;
 
 //Banderas
 int banderaEncontro = 0;
 
 // ================= Declaracion variables para manejo de archivos =================
-char arreglo[100];
-int n = 0;
+int arreglo[100];
+int n = 0; //Es la cantidad de datos que hay en el arreglo 
 int cn = 0;
 int guardacn = 0;
 
 
 // ================= Declaracion de prototipos =================
 int numeroDatos();
-int capturaCaracteres();
-int impresionCaracteres();
 int capturaNumeros();
 int impresionNumeros();
-int capturaNombres();
 int menu();
 int impresionNumerosArchivo();
 
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
 struct Entrada {
-    char valor;
+    int valor;
 } entrada;
 
 
 // Declaracion de la estructura que permite copiar los datos del arreglo y guardarlos en un archivo de salida
 struct Salida {
-    char valor;
+    int valor;
 } salida;
 
 
-string nombreArchivoE;   // Nombre del archivo de entrada
-string nombreArchivoS;   // Nombre del archivo de salida
+string nombreArchivoE;
+string nombreArchivoS;
 
 
-// ================= Captura de caracteres =================
+// ================= Captura de numeros =================
 
-int capturaCaracteres() {
+int capturaNumeros() {
 
-    cout << "\nTeclee " << n << " caracteres separados por un espacio : ";
+    cout << "\nTeclee " << n << " numeros separados por un espacio : ";
 
     for (i = 0; i < n; i++) {
         cin >> arreglo[i];
@@ -70,8 +68,6 @@ int capturaCaracteres() {
 
 
 // ================= Lectura del archivo =================
-// Lee los numeros contenidos en el archivo y los copia en el arreglo "arreglo"
-// Se dejan los numeros en un arreglo llamado "arreglo" para que las funciones puedan trabajar con ellos
 
 int leeArchivo() {
 
@@ -95,11 +91,10 @@ int leeArchivo() {
     cn = 0;
 
     for (int i = 0; !feof(archivo1); i++) {
-        fscanf(archivo1, "%c\n", &entrada.valor);
+        fscanf(archivo1, "%d\n", &entrada.valor);
         arreglo[i] = entrada.valor;
         cn++;
     }
-
     //cn--;
 
     cout << "\n\nSe ha generado el arreglo con los datos del archivo de entrada";
@@ -137,7 +132,7 @@ int guardaArchivo() {
 
     for (i = 0; i < n; i++) {
         salida.valor = arreglo[i];
-        fprintf(archivo2, "%c\n", salida.valor);
+        fprintf(archivo2, "%d\n", salida.valor);
         guardacn++;
     }
 
@@ -150,9 +145,9 @@ int guardaArchivo() {
 }
 
 
-// ================= Impresion de caracteres =================
+// ================= Impresion de numeros =================
 
-int impresionCaracteres() {
+int impresionNumeros() {
 
     cout << "\nContenido del arreglo: \n ";
 
@@ -164,7 +159,39 @@ int impresionCaracteres() {
 }
 
 
-// ================= Captura de numeros a procesar =================
+// ================= Impresion de numeros PARES =================
+
+int impresionNumerosPares() {
+
+    cout << "\nPares del arreglo: \n ";
+
+    for (i = 0; i < n; i++) { //Recorrer arreglo
+    	if (arreglo[i]%2 == 0){
+    		cout << arreglo[i] << "  ";
+    		sumPar = sumPar + arreglo[i];
+		}
+    }
+    cout << "\nLa sumatoria de los numeros pares es: " << sumPar;
+    return (0);
+}
+
+// ================= Impresion de numeros IMPARES =================
+
+int impresionNumerosImpares() {
+	
+    cout << "\nImpares del arreglo: \n ";
+    for (i = 0; i < n; i++) {
+    	if (arreglo[i]%2 != 0){
+    		cout << arreglo[i] << "  ";
+    		sumImpar = sumImpar + arreglo[i];
+		}
+    }
+    cout << "\nLa sumatoria de los numeros Impares es: " << sumImpar;
+
+    return (0);
+}
+
+// ================= Captura de cantidad =================
 
 int numeroDatos() {
     cout << "\nTeclee la cantidad de datos a procesar : ";
@@ -173,26 +200,26 @@ int numeroDatos() {
 }
 
 
-int busquedaCaracteres (){
-	banderaEncontro = 0;
-	impresionCaracteres ();
-	cout<<"\nTeclee el caracter a buscar : ";
-	cin>>caracterBuscar;
-	for (i=0; i<n; i++){
-	    if (caracterBuscar == arreglo [i]){
-	        cout<<"\nCaracter encontrado en la posicion "<<i+1;
-	        banderaEncontro = 1;
-	    }
-	}
-	if (banderaEncontro == 0){
-	    cout<<"\nCaracter no encontrado en el arreglo ";
-	}
-	return (0);		
+int busquedaNumeros (){
+    banderaEncontro = 0;
+    impresionNumeros ();
+    cout<<"\nTeclee el numero a buscar : ";
+    cin>>numeroBuscar;
+    for (i=0; i<n; i++){
+        if (numeroBuscar == arreglo [i]){
+            cout<<"\nNumero encontrado en la posicion "<<i+1;
+            banderaEncontro = 1;
+        }
+    }
+    if (banderaEncontro == 0){
+        cout<<"\nNumero no encontrado en el arreglo ";
+    }
+    return (0);        
 }
 
 
 int burbuja () {
-    impresionCaracteres ();
+    impresionNumeros ();
     cout << endl;
     for (i=0; i<n-1; i++){
         for (j=i; j<n; j++){
@@ -203,9 +230,25 @@ int burbuja () {
             }
         }
     }
-    impresionCaracteres ();
+    impresionNumeros ();
     return (0);
 }
+
+
+int identificacionNumero(){
+	impresionNumeros ();
+	impresionNumerosPares ();
+	impresionNumerosImpares();
+	
+	return(0);
+}
+/*int identificacionSuma(){
+	impresionNumeros ();
+	cout << endl;
+	for ()
+	
+} */
+
 
 // ================= MAIN =================
 
@@ -217,17 +260,18 @@ int main() {
 
         switch (opcion) {
         case (1):
-            capturaCaracteres();
-            impresionCaracteres();
+            numeroDatos();
+            capturaNumeros();
+            impresionNumeros();
             break;
             
         case (2):
             leeArchivo();
-            impresionCaracteres();
+            impresionNumeros();
             break;
             
         case (3):
-            busquedaCaracteres();
+            busquedaNumeros();
             break;
             
         case (4):
@@ -235,16 +279,20 @@ int main() {
             break;
         
         case (5):
+            identificacionNumero();
+            break;
+        
+        case (6):
             guardaArchivo();
             break;
             
-        case (6):
+        case (7):
             cout << "\nHasta luego";
             repeticion++;
             break;
             
         default:
-            cout << "\nOpcion inválida";
+            cout << "\nOpcion invalida";
         }
 
         cout << endl;
@@ -256,18 +304,19 @@ int main() {
 }
 
 
-// ================= MENu =================
+// ================= MENU =================
 
 int menu() {
     system("cls");
     cout << "\n Quirino Gonzalez Johann David";
     cout << "\n\tMenu";
-    cout << "\n1 - Captura de caracteres";
-    cout << "\n2 - Lectura de archivo caracteres";
-    cout << "\n3 - Busqueda caracteres";
+    cout << "\n1 - Captura de numeros";
+    cout << "\n2 - Lectura de archivo numeros";
+    cout << "\n3 - Busqueda secuencial de numeros";
     cout << "\n4 - Metodo de ordenamiento Burbuja";
-    cout << "\n5 - Guardar archivo";
-    cout << "\n6 - Salir del menu";
+    cout << "\n5 - Identificacion y suma de numeros pares e impares contenidos en el arreglo";
+    cout << "\n6 - Guardar archivo";
+    cout << "\n7 - Salir del menu";
     cout << "\nTeclee la opcion deseada : ";
     cin >> opcion;
 
