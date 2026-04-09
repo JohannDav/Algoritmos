@@ -1,5 +1,4 @@
 // Autor: Quirino González Johann David
-
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +18,11 @@ int aux;
 
 //Banderas
 int banderaEncontro = 0;
+
+// ===== VARIABLES DE TIEMPO =====
+clock_t t_ini, t_fin;
+double secs;
+
 
 // ================= Declaracion variables para manejo de archivos =================
 int arreglo[100];
@@ -93,7 +97,6 @@ int leeArchivo() {
         arreglo[i] = entrada.valor;
         cn++;
     }
-    //cn--;
 
     cout << "\n\nSe ha generado el arreglo con los datos del archivo de entrada";
     cout << "\nLa cantidad de numeros contenidos en el arreglo son:  " << cn << "\n\n";
@@ -166,27 +169,39 @@ int numeroDatos() {
 }
 
 
+// ================= BUSQUEDA =================
+
 int busquedaNumeros (){
     banderaEncontro = 0;
     impresionNumeros ();
     cout<<"\nTeclee el numero a buscar : ";
     cin>>numeroBuscar;
+
     for (i=0; i<n; i++){
         if (numeroBuscar == arreglo [i]){
             cout<<"\nNumero encontrado en la posicion "<<i+1;
             banderaEncontro = 1;
         }
     }
+
     if (banderaEncontro == 0){
         cout<<"\nNumero no encontrado en el arreglo ";
     }
+
     return (0);        
 }
 
 
+// ================= BURBUJA CON TIEMPO =================
+
 int burbuja () {
+
     impresionNumeros ();
     cout << endl;
+
+    // ===== INICIO DE TIEMPO =====
+    t_ini = clock();
+
     for (i=0; i<n-1; i++){
         for (j=i; j<n; j++){
             if (arreglo [i] > arreglo [j]) {
@@ -196,7 +211,19 @@ int burbuja () {
             }
         }
     }
+
+    // ===== FIN DE TIEMPO =====
+    t_fin = clock();
+
     impresionNumeros ();
+
+    // ===== CALCULO =====
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+
+    cout << "\n\nTiempo de ordenamiento por el metodo de Burbuja: ";
+    printf("%.16g milisegundos", secs * 1000.0);
+    cout << "\n";
+
     return (0);
 }
 
