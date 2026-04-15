@@ -242,13 +242,6 @@ int identificacionNumero(){
 	
 	return(0);
 }
-/*int identificacionSuma(){
-	impresionNumeros ();
-	cout << endl;
-	for ()
-	
-} */
-
 
 // ================= MAIN =================
 

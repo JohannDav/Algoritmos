@@ -19,7 +19,11 @@ int banderaEncontro = 0;
 int aux;
 clock_t t_ini, t_fin;
 double secs;
+string nombreArchivoE;
+string nombreArchivoS;
+
 //Hasta aqui validado con lo de burbuja con tiempo
+
 int opcion = 0;
 int repeticion = 0;
 int numeroBuscar;
@@ -43,11 +47,6 @@ struct Entrada {
 struct Salida {
     int valor;
 } salida;
-
-
-string nombreArchivoE;
-string nombreArchivoS;
-
 
 // ================= Captura de numeros =================
 
@@ -163,7 +162,7 @@ int numeroDatos() {
     return (0);
 }
 
-
+// ================= Busqueda de numeros =================
 int busquedaNumeros (){
     banderaEncontro = 0;
     impresionNumeros ();
@@ -181,7 +180,7 @@ int busquedaNumeros (){
     return (0);        
 }
 
-
+// ================= Metodo burbuja =================
 int burbuja () {
     impresionNumeros ();
     cout << endl;
@@ -200,7 +199,6 @@ int burbuja () {
 
 
 // ================= MAIN =================
-
 int main() {
 
     for (repeticion = 0; repeticion == 0;) {
