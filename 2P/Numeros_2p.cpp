@@ -1,31 +1,29 @@
 // Autor: Quirino González Johann David
-
-#include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string>
+#include <stdio.h>
+#include <iostream>
 #include <fstream>
 #include <time.h>
+#include <string>
 using namespace std;
-
 
 // ================= Declaracion de variables globales =================
 int i = 0;
 int j = 0;
-int opcion = 0;
-int repeticion = 0;
-int numeroBuscar;
-int aux;
-
-//Banderas
-int banderaEncontro = 0;
-
-// ================= Declaracion variables para manejo de archivos =================
-int arreglo[100];
+int k = 0;
+int l = 0;
 int n = 0;
 int cn = 0;
 int guardacn = 0;
-
+int banderaEncontro = 0;
+int aux;
+clock_t t_ini, t_fin;
+double secs;
+//Hasta aqui validado con lo de burbuja con tiempo
+int opcion = 0;
+int repeticion = 0;
+int numeroBuscar;
+int arreglo[1000];
 
 // ================= Declaracion de prototipos =================
 int numeroDatos();
