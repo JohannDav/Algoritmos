@@ -27,7 +27,7 @@ string nombreArchivoS;
 int opcion = 0;
 int repeticion = 0;
 int numeroBuscar;
-int arreglo[1000];
+int arreglo[1000]; //Tamaño 1,000
 
 // ================= Declaracion de prototipos =================
 int numeroDatos();
@@ -183,6 +183,7 @@ int busquedaNumeros (){
 // ================= Metodo burbuja =================
 int burbuja () {
     impresionNumeros ();
+    t_ini = clock();		//Inicia el conteo de tiempo
     cout << endl;
     for (i=0; i<n-1; i++){
         for (j=i; j<n; j++){
@@ -193,7 +194,16 @@ int burbuja () {
             }
         }
     }
-    impresionNumeros ();
+    t_fin = clock();		//Finaliza el conteo tiempo
+    impresionNumeros ();	//Imprime los numeros
+    
+    //Inicia la impresion de tiempo
+	cout<<"\n\n Tiempo de ordenamiento por el metodo de Burbuja :  ";	// Imprime el tiempo que se tardo el metodo en ordenar los datos
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;    // determina los milisegundo utilizados
+    printf("%.16g milisegundos", secs * 1000.0);                // imprime el tiempo utilizado
+    cout<<"\n\n";
+    //Termina impresion de tiempo
+    
     return (0);
 }
 
