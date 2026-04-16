@@ -16,18 +16,21 @@ int n = 0;
 int cn = 0;
 int guardacn = 0;
 int banderaEncontro = 0;
-int aux;
-clock_t t_ini, t_fin;
-double secs;
-string nombreArchivoE;
-string nombreArchivoS;
-
-//Hasta aqui validado con lo de burbuja con tiempo
-
+int aux = 0;
+int aux_num = 0;
 int opcion = 0;
 int repeticion = 0;
 int numeroBuscar;
 int arreglo[1000]; //Tamaño 1,000
+
+int izq=0, der=0, pivote=0;		//Quick Sort
+int temporal =0;				//Quick Sort
+int limite_izq=0;				//Quick Sort
+int limite_der=0;				//Quick Sort, limite_izq = 0, limite_der = n-1
+clock_t t_ini, t_fin;			//Tiempo
+double secs;					//Tiempo
+string nombreArchivoE;
+string nombreArchivoS;
 
 // ================= Declaracion de prototipos =================
 int numeroDatos();
@@ -35,7 +38,8 @@ int capturaNumeros();
 int impresionNumeros();
 int menu();
 int impresionNumerosArchivo();
-
+void ordenamientoQuick(); 
+void quickSort (int arreglo[], int limite_izq, int limite_der);
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
 struct Entrada {
@@ -207,6 +211,44 @@ int burbuja () {
     return (0);
 }
 
+// ================= Metodo QuickSort =================
+void ordenamientoQuick() {
+	impresionNumeros ();
+    quickSort (arreglo, 0, n-1);             //Se requiere el prototipado de la funcion porque esta despues de la funcion que la llamó
+	cout << endl;
+	cout << endl;
+	cout << "\n" << endl;
+	impresionNumeros ();	//Imprime los numeros
+}
+
+void quickSort (int arreglo[], int limite_izq, int limite_der){
+    izq = limite_izq;
+    der = limite_der;
+    pivote = arreglo[(izq + der)/2];
+    do{
+        while (arreglo [izq] < pivote && izq < limite_der){
+        	izq++;	
+		}
+        while (pivote < arreglo[der] && der > limite_izq){
+        	der--;
+		}
+        if (izq <= der){
+            temporal = arreglo[izq];
+            arreglo[izq] = arreglo[der];
+            arreglo[der] = temporal;
+            izq++;
+            der--;
+        }
+    }while(izq <= der);    
+    
+    if(limite_izq < der){
+		quickSort(arreglo, limite_izq, der);
+	}
+    if(limite_der > izq){
+		quickSort(arreglo, izq, limite_der);
+	}
+}
+
 
 // ================= MAIN =================
 int main() {
@@ -236,10 +278,22 @@ int main() {
             break;
         
         case (5):
-            guardaArchivo();
+        	t_ini = clock();		//Inicia el conteo de tiempo
+            ordenamientoQuick();
+            t_fin = clock();		//Finaliza el conteo tiempo    		
+		    //Inicia la impresion de tiempo
+			cout<<"\n\n Tiempo de ordenamiento por el metodo de QuickSort :  ";	// Imprime el tiempo que se tardo el metodo en ordenar los datos
+    		secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;    // determina los milisegundo utilizados
+    		printf("%.16g milisegundos", secs * 1000.0);                // imprime el tiempo utilizado
+    		cout<<"\n\n";
+    		//Termina impresion de tiempo
             break;
             
         case (6):
+            guardaArchivo();
+            break;
+            
+        case (7):
             cout << "\nHasta luego";
             repeticion++;
             break;
@@ -267,8 +321,9 @@ int menu() {
     cout << "\n2 - Lectura de archivo numeros";
     cout << "\n3 - Busqueda numeros";
     cout << "\n4 - Metodo de ordenamiento Burbuja";
-    cout << "\n5 - Guardar archivo";
-    cout << "\n6 - Salir del menu";
+    cout << "\n5 - Metodo de ordenamiento QuickSort";
+    cout << "\n6 - Guardar archivo";
+    cout << "\n7 - Salir del menu";
     cout << "\nTeclee la opcion deseada : ";
     cin >> opcion;
 
