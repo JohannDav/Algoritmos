@@ -360,10 +360,14 @@ int main() {
 			break;
 
 		case (8):
+			//alfanum
+			break;
+		
+		case (9):
 			guardaArchivo();
 			break;
 
-		case (9):
+		case (10):
 			cout << "\nHasta luego";
 			repeticion++;
 			break;
