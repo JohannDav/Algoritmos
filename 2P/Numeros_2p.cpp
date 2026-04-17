@@ -22,7 +22,9 @@ int opcion = 0;
 int repeticion = 0;
 int numeroBuscar;
 int arreglo[1000]; //Tamaño 1,000
-
+int inferior = 0; 				//Busqueda binaria
+int superior = n;				//Busqueda binaria
+int buscar = 0; 				//Busqueda Binaria
 int izq=0, der=0, pivote=0;		//Quick Sort
 int temporal =0;				//Quick Sort
 int limite_izq=0;				//Quick Sort
@@ -40,6 +42,8 @@ int menu();
 int impresionNumerosArchivo();
 void ordenamientoQuick(); 
 void quickSort (int arreglo[], int limite_izq, int limite_der);
+void busquedaBin();
+int busquedaBinaria();
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
 struct Entrada {
@@ -184,6 +188,39 @@ int busquedaNumeros (){
     return (0);        
 }
 
+//  ================= Busqueda Binaria =================
+void busquedaBin(){
+	cout<<"\nTeclee el numero a buscar en el arreglo :   ";
+	cin>>buscar;
+	busquedaBinaria();             //Se requiere el prototipado de la funcion porque esta despues de la funcion que la llamó
+    if (arreglo[i] == buscar){
+        cout<<"El valor  "<<buscar<<"  se encuentra en la posicion"<<i + 1 << "\n";
+    }
+    else {
+        cout<<"No se encontra el  valor  "<<buscar<<"  en el arreglo\n";
+    }
+}
+
+
+int busquedaBinaria(){
+	inferior=0, superior=n;
+    while (superior >= inferior){
+        i = (inferior + superior) / 2;
+        if (arreglo[i] == buscar){
+             return i;
+        }
+        else {
+            if (buscar < arreglo [i]){
+                superior = i-1;
+            }
+            else{
+                inferior = i+1;
+            }
+    	}
+    }
+    return (0);
+}
+
 // ================= Metodo burbuja =================
 int burbuja () {
     impresionNumeros ();
@@ -249,7 +286,6 @@ void quickSort (int arreglo[], int limite_izq, int limite_der){
 	}
 }
 
-
 // ================= MAIN =================
 int main() {
 
@@ -272,12 +308,17 @@ int main() {
         case (3):
             busquedaNumeros();
             break;
-            
-        case (4):
+        
+		case (4):
+            impresionNumeros();
+            busquedaBin();
+			break;
+		    
+        case (5):
             burbuja();
             break;
         
-        case (5):
+        case (6):
         	t_ini = clock();		//Inicia el conteo de tiempo
             ordenamientoQuick();
             t_fin = clock();		//Finaliza el conteo tiempo    		
@@ -289,11 +330,11 @@ int main() {
     		//Termina impresion de tiempo
             break;
             
-        case (6):
+        case (7):
             guardaArchivo();
             break;
             
-        case (7):
+        case (8):
             cout << "\nHasta luego";
             repeticion++;
             break;
@@ -319,11 +360,12 @@ int menu() {
     cout << "\n\tMenu";
     cout << "\n1 - Captura de numeros";
     cout << "\n2 - Lectura de archivo numeros";
-    cout << "\n3 - Busqueda numeros";
-    cout << "\n4 - Metodo de ordenamiento Burbuja";
-    cout << "\n5 - Metodo de ordenamiento QuickSort";
-    cout << "\n6 - Guardar archivo";
-    cout << "\n7 - Salir del menu";
+    cout << "\n3 - Busqueda Secuencial";
+    cout << "\n4 - Busqueda Binaria";
+    cout << "\n5 - Metodo de ordenamiento Burbuja";
+    cout << "\n6 - Metodo de ordenamiento QuickSort";
+    cout << "\n7 - Guardar archivo";
+    cout << "\n8 - Salir del menu";
     cout << "\nTeclee la opcion deseada : ";
     cin >> opcion;
 

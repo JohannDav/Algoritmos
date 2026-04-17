@@ -1,5 +1,4 @@
 // Autor: Quirino González Johann David
-
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -187,7 +186,7 @@ int busquedaCaracteres (){
 	if (banderaEncontro == 0){
 	    cout<<"\nCaracter no encontrado en el arreglo ";
 	}
-	return (0);		
+	return (0);
 }
 
 
@@ -220,29 +219,29 @@ int main() {
             capturaCaracteres();
             impresionCaracteres();
             break;
-            
+
         case (2):
             leeArchivo();
             impresionCaracteres();
             break;
-            
+
         case (3):
             busquedaCaracteres();
             break;
-            
+
         case (4):
             burbuja();
             break;
-        
+
         case (5):
             guardaArchivo();
             break;
-            
+
         case (6):
             cout << "\nHasta luego";
             repeticion++;
             break;
-            
+
         default:
             cout << "\nOpcion inválida";
         }
