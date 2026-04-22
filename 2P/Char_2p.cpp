@@ -27,6 +27,12 @@ int cn = 0;
 int guardacn = 0;
 
 
+//Busqueda binaria
+int inferior = 0;
+int superior = n;
+char buscar = 0;
+
+
 //QuickSort
 int izq=0, der=0;
 char pivote;
@@ -50,6 +56,17 @@ int busquedaCaracteres();
 int burbuja();
 void ordenamientoQuick();
 void quickSort (char arreglo[], int limite_izq, int limite_der);
+void busquedaBin();
+int busquedaBinaria();
+int identAlfaNumerico();
+int identLetra();
+int identDigito();
+int identMinuscula();
+int identMayuscula();
+int identEspacio();
+int identPuntuacion();
+int convertirMinuscula();
+int convertirMayuscula();
 
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
@@ -202,6 +219,40 @@ int busquedaCaracteres (){
 }
 
 
+// ================= Busqueda Binaria =================
+
+void busquedaBin(){
+	cout<<"\nTeclee el caracter a buscar en el arreglo :   ";
+	cin>>buscar;
+	busquedaBinaria();
+	if (arreglo[i] == buscar){
+	    cout<<"El valor  "<<buscar<<"  se encuentra en la posicion "<<i + 1;
+	}
+	else {
+	    cout<<"No se encontra el  valor  "<<buscar<<"  en el arreglo\n";
+	}
+}
+
+int busquedaBinaria(){
+	inferior=0, superior=n;
+	while (superior >= inferior){
+	    i = (inferior + superior) / 2;
+	    if (arreglo[i] == buscar){
+	         return i;
+	    }
+	    else {
+	        if (buscar < arreglo [i]){
+	            superior = i-1;
+	        }
+	        else{
+	            inferior = i+1;
+	        }
+	    }
+	}
+	return (0);
+}
+
+
 // ================= Metodo burbuja =================
 
 int burbuja () {
@@ -269,6 +320,127 @@ void quickSort (char arreglo[], int limite_izq, int limite_der){
 }
 
 
+// ================= Funciones de verificacion de caracteres (recorren el arreglo) =================
+
+int identAlfaNumerico() {
+	cout << "\nVerificando caracter por caracter si es alfanumerico:\n";
+	for (i = 0; i < n; i++) {
+		if ((arreglo[i] >= 'A' && arreglo[i] <= 'Z') || (arreglo[i] >= 'a' && arreglo[i] <= 'z') || (arreglo[i] >= '0' && arreglo[i] <= '9')) {
+			cout << "El caracter " << arreglo[i] << " es alfanumerico\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " es un simbolo\n";
+		}
+	}
+	return (0);
+}
+
+int identLetra() {
+	cout << "\nVerificando caracter por caracter si es una letra:\n";
+	for (i = 0; i < n; i++) {
+		if ((arreglo[i] >= 'A' && arreglo[i] <= 'Z') || (arreglo[i] >= 'a' && arreglo[i] <= 'z')) {
+			cout << "El caracter " << arreglo[i] << " es una letra\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " no es una letra\n";
+		}
+	}
+	return (0);
+}
+
+int identDigito() {
+	cout << "\nVerificando caracter por caracter si es un digito:\n";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= '0' && arreglo[i] <= '9') {
+			cout << "El caracter " << arreglo[i] << " es un digito\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " no es un digito\n";
+		}
+	}
+	return (0);
+}
+
+int identMinuscula() {
+	cout << "\nVerificando caracter por caracter si es una minuscula:\n";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= 'a' && arreglo[i] <= 'z') {
+			cout << "El caracter " << arreglo[i] << " es una minuscula\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " no es una minuscula\n";
+		}
+	}
+	return (0);
+}
+
+int identMayuscula() {
+	cout << "\nVerificando caracter por caracter si es una mayuscula:\n";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= 'A' && arreglo[i] <= 'Z') {
+			cout << "El caracter " << arreglo[i] << " es una mayuscula\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " no es una mayuscula\n";
+		}
+	}
+	return (0);
+}
+
+int identEspacio() {
+	cout << "\nVerificando caracter por caracter si es un espacio en blanco:\n";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] == ' ') {
+			cout << "El caracter " << arreglo[i] << " es un espacio en blanco\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " no es un espacio en blanco\n";
+		}
+	}
+	return (0);
+}
+
+int identPuntuacion() {
+	cout << "\nVerificando caracter por caracter si es un signo de puntuacion:\n";
+	for (i = 0; i < n; i++) {
+		if ((arreglo[i] >= 33 && arreglo[i] <= 47) || (arreglo[i] >= 58 && arreglo[i] <= 64) || (arreglo[i] >= 91 && arreglo[i] <= 96) || (arreglo[i] >= 123 && arreglo[i] <= 126)) {
+			cout << "El caracter " << arreglo[i] << " es un signo de puntuacion\n";
+		} else {
+			cout << "El caracter " << arreglo[i] << " no es un signo de puntuacion\n";
+		}
+	}
+	return (0);
+}
+
+int convertirMinuscula() {
+	cout << "\nConvirtiendo caracter por caracter a minuscula:\n";
+	cout << "Arreglo original: ";
+	for (i = 0; i < n; i++) {
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\nArreglo convertido: ";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= 'A' && arreglo[i] <= 'Z') {
+			arreglo[i] = arreglo[i] + 32;
+		}
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\n";
+	return (0);
+}
+
+int convertirMayuscula() {
+	cout << "\nConvirtiendo caracter por caracter a mayuscula:\n";
+	cout << "Arreglo original: ";
+	for (i = 0; i < n; i++) {
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\nArreglo convertido: ";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= 'a' && arreglo[i] <= 'z') {
+			arreglo[i] = arreglo[i] - 32;
+		}
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\n";
+	return (0);
+}
+
+
 // ================= MAIN =================
 
 int main() {
@@ -288,20 +460,25 @@ int main() {
 			leeArchivo();
 			impresionCaracteres();
 			break;
-
+			
 		case (3):
-			busquedaCaracteres();
+			impresionCaracteres();
 			break;
 
 		case (4):
-			// BUSQUEDA BINARIA (NO IMPLEMENTADA)
+			busquedaCaracteres();
 			break;
 
 		case (5):
-			burbuja();
+			impresionCaracteres();
+			busquedaBin();
 			break;
 
 		case (6):
+			burbuja();
+			break;
+
+		case (7):
 			t_ini = clock();
 			ordenamientoQuick();
 			t_fin = clock();
@@ -312,11 +489,47 @@ int main() {
 			cout<<"\n\n";
 			break;
 
-		case (7):
+		case (8):
+			identAlfaNumerico();
+			break;
+		
+		case (9):
+			identLetra();
+			break;
+
+		case (10):
+			identDigito();
+			break;
+
+		case (11):
+			identMinuscula();
+			break;
+
+		case (12):
+			identMayuscula();
+			break;
+
+		case (13):
+			identEspacio();
+			break;
+
+		case (14):
+			identPuntuacion();
+			break;
+
+		case (15):
+			convertirMinuscula();
+			break;
+
+		case (16):
+			convertirMayuscula();
+			break;
+
+		case (17):
 			guardaArchivo();
 			break;
 
-		case (8):
+		case (18):
 			cout << "\nHasta luego";
 			repeticion++;
 			break;
@@ -342,12 +555,22 @@ int menu() {
 	cout << "\n\tMenu";
 	cout << "\n1 - Captura de caracteres";
 	cout << "\n2 - Lectura de archivo caracteres";
-	cout << "\n3 - Busqueda caracteres";
-	cout << "\n4 - Busqueda binaria";
-	cout << "\n5 - Metodo de ordenamiento Burbuja";
-	cout << "\n6 - Metodo de ordenamiento QuickSort";
-	cout << "\n7 - Guardar archivo";
-	cout << "\n8 - Salir del menu";
+	cout << "\n3 - Impresion de caracteres";
+	cout << "\n4 - Busqueda caracteres";
+	cout << "\n5 - Busqueda binaria";
+	cout << "\n6 - Metodo de ordenamiento Burbuja";
+	cout << "\n7 - Metodo de ordenamiento QuickSort";
+	cout << "\n8 - Identificar si el caracter es alfanumerico";
+	cout << "\n9 - Identificar si el caracter es una letra";
+	cout << "\n10 - Identificar si el caracter es un digito";
+	cout << "\n11 - Identificar si el caracter es una minuscula";
+	cout << "\n12 - Identificar si el caracter es una mayuscula";
+	cout << "\n13 - Identificar si el caracter es un espacio en blanco";
+	cout << "\n14 - Identificar si el caracter es un signo de puntuacion";
+	cout << "\n15 - Convertir todo a minuscula";
+	cout << "\n16 - Convertir todo a mayuscula";
+	cout << "\n17 - Guardar archivo";
+	cout << "\n18 - Salir del menu";
 	cout << "\nTeclee la opcion deseada : ";
 	cin >> opcion;
 
