@@ -34,6 +34,11 @@ double secs;					//Tiempo
 string nombreArchivoE;
 string nombreArchivoS;
 
+// Variables adicionales para Shell y Flotacion
+int subarreglo = 0;     // Para Shell sort
+int temp = 0;           // Para Shell sort
+int numMayor = 0;       // Para Flotacion
+
 // ================= Declaracion de prototipos =================
 int numeroDatos();
 int capturaNumeros();
@@ -44,6 +49,8 @@ void ordenamientoQuick();
 void quickSort (int arreglo[], int limite_izq, int limite_der);
 void busquedaBin();
 int busquedaBinaria();
+int shell();            // Prototipo de Shell sort
+int flotacion();        // Prototipo de Flotacion
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
 struct Entrada {
@@ -157,6 +164,7 @@ int impresionNumeros() {
     for (i = 0; i < n; i++) {
         cout << arreglo[i] << "  ";
     }
+    cout << endl;
 
     return (0);
 }
@@ -194,7 +202,7 @@ void busquedaBin(){
 	cin>>buscar;
 	busquedaBinaria();             //Se requiere el prototipado de la funcion porque esta despues de la funcion que la llamó
     if (arreglo[i] == buscar){
-        cout<<"El valor  "<<buscar<<"  se encuentra en la posicion"<<i + 1 << "\n";
+        cout<<"El valor  "<<buscar<<"  se encuentra en la posicion "<<i + 1 << "\n";
     }
     else {
         cout<<"No se encontra el  valor  "<<buscar<<"  en el arreglo\n";
@@ -242,6 +250,84 @@ int burbuja () {
 	cout<<"\n\n Tiempo de ordenamiento por el metodo de Burbuja :  ";	// Imprime el tiempo que se tardo el metodo en ordenar los datos
     secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;    // determina los milisegundo utilizados
     printf("%.16g milisegundos", secs * 1000.0);                // imprime el tiempo utilizado
+    cout<<"\n\n";
+    //Termina impresion de tiempo
+    
+    return (0);
+}
+
+// ================= Metodo Flotacion =================
+int flotacion() {
+    impresionNumeros();
+    t_ini = clock();        //Inicia el conteo de tiempo
+    
+    for (i=0; i < n-1; i++){ 
+        //Intercambio
+        for (j=0; j < n-1; j++){
+            if (arreglo[j] > arreglo[j+1]) {
+                numMayor = arreglo[j];
+                arreglo[j] = arreglo[j + 1];
+                arreglo[j + 1] = numMayor;
+            }      
+        }    
+        cout<<"\nPasada "<<i+1<<" observe los intercambios ";
+        impresionNumeros();   
+    }
+    
+    t_fin = clock();        //Finaliza el conteo tiempo
+    impresionNumeros();     //Imprime los numeros
+    
+    //Inicia la impresion de tiempo
+    cout<<"\n\n Tiempo de ordenamiento por el metodo de Flotacion :  ";
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+    printf("%.16g milisegundos", secs * 1000.0);
+    cout<<"\n\n";
+    //Termina impresion de tiempo
+    
+    return (0);
+}
+
+// ================= Metodo Shell =================
+int shell() {
+    impresionNumeros();
+    t_ini = clock();        //Inicia el conteo de tiempo
+    
+    subarreglo = n/2;
+    while (subarreglo > 0) {
+        for (i=subarreglo; i < n; i++) {
+            j = i;
+            temp = arreglo[i];
+            while ((j >= subarreglo) && (arreglo[j - subarreglo] > temp)) {
+                arreglo[j] = arreglo[j - subarreglo];
+                j = j - subarreglo;
+            }
+            arreglo[j] = temp;
+            //Impresion de pasadas            
+            cout<<endl<<endl;
+            cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
+            cout<<"\nQue contiene el numero \n";
+            for (l=0; l<n; l++){
+                cout<<arreglo [l]<< "   ";
+            }
+        }
+        
+        //Impresion de pasada por pasada
+        cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
+        cout<<"\nQue contiene el numero \n";
+        for (l=0; l<n; l++){
+            cout<<arreglo [l]<< "   ";
+        }		
+        subarreglo /= 2;
+    }
+    
+    t_fin = clock();        //Finaliza el conteo tiempo
+    cout<<endl;
+    impresionNumeros();     //Imprime los numeros
+    
+    //Inicia la impresion de tiempo
+    cout<<"\n\n Tiempo de ordenamiento por el metodo de Shell :  ";
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+    printf("%.16g milisegundos", secs * 1000.0);
     cout<<"\n\n";
     //Termina impresion de tiempo
     
@@ -305,20 +391,28 @@ int main() {
             impresionNumeros();
             break;
             
-        case (3):
+        case (3)://Secuencial
             busquedaNumeros();
             break;
-        
-		case (4):
+            
+		case (4): //Binaria
             impresionNumeros();
             busquedaBin();
 			break;
 		    
-        case (5):
+        case (5): //Burbuja
             burbuja();
             break;
         
-        case (6):
+        case (6): //Flotacion
+            flotacion();
+            break;
+            
+        case (7): //Shell
+            shell();
+            break;
+            
+        case (8): //Quick
         	t_ini = clock();		//Inicia el conteo de tiempo
             ordenamientoQuick();
             t_fin = clock();		//Finaliza el conteo tiempo    		
@@ -330,11 +424,11 @@ int main() {
     		//Termina impresion de tiempo
             break;
             
-        case (7):
+        case (9):
             guardaArchivo();
             break;
             
-        case (8):
+        case (10):
             cout << "\nHasta luego";
             repeticion++;
             break;
@@ -363,9 +457,11 @@ int menu() {
     cout << "\n3 - Busqueda Secuencial";
     cout << "\n4 - Busqueda Binaria";
     cout << "\n5 - Metodo de ordenamiento Burbuja";
-    cout << "\n6 - Metodo de ordenamiento QuickSort";
-    cout << "\n7 - Guardar archivo";
-    cout << "\n8 - Salir del menu";
+    cout << "\n6 - Metodo de ordenamiento Flotacion"; 	
+    cout << "\n7 - Metodo de ordenamiento Shell";		
+    cout << "\n8 - Metodo de ordenamiento QuickSort";
+    cout << "\n9 - Guardar archivo";
+    cout << "\n10 - Salir del menu";
     cout << "\nTeclee la opcion deseada : ";
     cin >> opcion;
 
