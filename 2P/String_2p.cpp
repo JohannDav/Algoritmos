@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <fstream>    // Cabecera o biblioteca que permite trabajar con archivos
-#include <time.h>     // Cabecera que permite contabilizar el tiempo de ejecucion
+#include <fstream>
+#include <time.h>
+#include <ctype.h>
+#include <cstring>
 using namespace std;
 
 
@@ -13,7 +15,7 @@ int i = 0;
 int j = 0;
 int opcion = 0;
 int repeticion = 0;
-char caracterBuscar;
+string caracterBuscar;
 char aux;
 
 
@@ -21,7 +23,7 @@ char aux;
 int banderaEncontro = 0;
 
 // ================= Declaracion variables para manejo de archivos =================
-string arreglo;
+string arreglo[1000];  // ARREGLO DE STRINGS (palabras completas)
 int n = 0;
 int cn = 0;
 int guardacn = 0;
@@ -29,14 +31,14 @@ int guardacn = 0;
 
 //Busqueda binaria
 int inferior = 0;
-int superior = n;
-char buscar = 0;
+int superior = 0;
+string buscar;
 
 
 //QuickSort
 int izq=0, der=0;
-char pivote;
-char temporal;
+string pivote;
+string temporal;
 
 
 //Tiempo
@@ -46,16 +48,15 @@ double secs;
 
 // ================= Declaracion de prototipos =================
 int numeroDatos();
-int capturaCaracteres();
-int impresionCaracteres();
+int capturaStrings();
+int impresionStrings();
 int menu();
-int impresionNumerosArchivo();
 int leeArchivo();
 int guardaArchivo();
-int busquedaCaracteres();
+int busquedaStrings();
 int burbuja();
 void ordenamientoQuick();
-void quickSort (string &arreglo, int limite_izq, int limite_der);
+void quickSort(string arreglo[], int limite_izq, int limite_der);
 void busquedaBin();
 int busquedaBinaria();
 int identAlfaNumerico();
@@ -69,507 +70,606 @@ int convertirMinuscula();
 int convertirMayuscula();
 
 
-// Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
-struct Entrada {
-	char valor;
-} entrada;
+string nombreArchivoE;
+string nombreArchivoS;
 
 
-// Declaracion de la estructura que permite copiar los datos del arreglo y guardarlos en un archivo de salida
-struct Salida {
-	char valor;
-} salida;
+// ================= Captura de strings =================
 
-
-string nombreArchivoE;   // Nombre del archivo de entrada
-string nombreArchivoS;   // Nombre del archivo de salida
-
-
-// ================= Captura de caracteres =================
-
-int capturaCaracteres() {
-
-	cout << "\nTeclee " << n << " caracteres separados por un espacio : ";
-
-	for (i = 0; i < n; i++) {
-		cin >> arreglo[i];
-	}
-
-	return (0);
+int capturaStrings() {
+    cout << "\nTeclee " << n << " palabras separadas por un espacio : ";
+    for (i = 0; i < n; i++) {
+        cin >> arreglo[i];
+    }
+    return (0);
 }
 
 
-// ================= Lectura del archivo =================
+// ================= Lectura del archivo (lee palabras completas usando fgets) =================
 
 int leeArchivo() {
-
-	FILE *archivo1;
-
-	cout << "\nTeclea el nombre del archivo de entrada (sin espacio, ni caracteres especiales):   ";
-	cin >> nombreArchivoE;
-
-	nombreArchivoE += ".txt";
-
-	archivo1 = fopen(nombreArchivoE.c_str(), "r");
-
-	if (archivo1 == NULL) {
-		cout << "\nNo se puede abrir el archivo ";
-		exit(1);
-	}
-	else {
-		cout << "\nSe abrio correctamente el archivo " << nombreArchivoE.c_str();
-	}
-
-	cn = 0;
-	arreglo = "";
-
-	for (int i = 0; !feof(archivo1); i++) {
-		fscanf(archivo1, "%c\n", &entrada.valor);
-		arreglo += entrada.valor;
-		cn++;
-	}
-
-	cout << "\n\nSe ha generado el arreglo con los datos del archivo de entrada";
-	cout << "\nLa cantidad de numeros contenidos en el arreglo son:  " << cn << "\n\n";
-
-	n = cn;
-
-	fclose(archivo1);
-
-	return (0);
+    FILE *archivo1;
+    char linea[1000];
+    
+    cout << "\nTeclea el nombre del archivo de entrada (sin espacio, ni caracteres especiales):   ";
+    cin >> nombreArchivoE;
+    
+    nombreArchivoE += ".txt";
+    
+    archivo1 = fopen(nombreArchivoE.c_str(), "r");
+    
+    if (archivo1 == NULL) {
+        cout << "\nNo se puede abrir el archivo ";
+        exit(1);
+    }
+    else {
+        cout << "\nSe abrio correctamente el archivo " << nombreArchivoE.c_str();
+    }
+    
+    cn = 0;
+    
+    // Leer el archivo y separar en palabras (strings)
+    while (fgets(linea, sizeof(linea), archivo1) != NULL) {
+        // Usar strtok para separar la linea en palabras
+        char *token = strtok(linea, " \t\n\r");
+        
+        while (token != NULL) {
+            arreglo[cn] = string(token);
+            cn++;
+            token = strtok(NULL, " \t\n\r");
+        }
+    }
+    
+    cout << "\n\nSe ha generado el arreglo con los datos del archivo de entrada";
+    cout << "\nLa cantidad de palabras contenidas en el arreglo son:  " << cn << "\n\n";
+    
+    n = cn;
+    superior = n;
+    
+    fclose(archivo1);
+    
+    return (0);
 }
 
 
 // ================= Guarda archivo =================
 
 int guardaArchivo() {
-
-	FILE *archivo2;
-
-	nombreArchivoS += "Quirino.txt";
-
-	archivo2 = fopen(nombreArchivoS.c_str(), "w");
-
-	if (archivo2 == NULL) {
-		cout << "\nNo se puede abrir el archivo ";
-		exit(1);
-	}
-	else {
-		cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
-	}
-
-	cout << "\n\nGuarda los numeros contenidos en el arreglo en el archivo";
-
-	guardacn = 0;
-
-	for (i = 0; i < n; i++) {
-		salida.valor = arreglo[i];
-		fprintf(archivo2, "%c\n", salida.valor);
-		guardacn++;
-	}
-
-	cout << "\n\nTotal de numeros guardados en el segundo archivo son: " << guardacn;
-	cout << "\n\n";
-
-	fclose(archivo2);
-
-	return (0);
+    FILE *archivo2;
+    
+    cout << "\nTeclea el nombre del archivo de salida: ";
+    cin >> nombreArchivoS;
+    
+    nombreArchivoS += ".txt";
+    
+    archivo2 = fopen(nombreArchivoS.c_str(), "w");
+    
+    if (archivo2 == NULL) {
+        cout << "\nNo se puede abrir el archivo ";
+        exit(1);
+    }
+    else {
+        cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
+    }
+    
+    cout << "\n\nGuardando las palabras contenidas en el arreglo en el archivo";
+    
+    guardacn = 0;
+    
+    for (i = 0; i < n; i++) {
+        fprintf(archivo2, "%s\n", arreglo[i].c_str());
+        guardacn++;
+    }
+    
+    cout << "\n\nTotal de palabras guardadas en el archivo son: " << guardacn;
+    cout << "\n\n";
+    
+    fclose(archivo2);
+    
+    return (0);
 }
 
 
-// ================= Impresion de caracteres =================
+// ================= Impresion de strings =================
 
-int impresionCaracteres() {
-
-	cout << "\nContenido del arreglo: \n ";
-
-	for (i = 0; i < n; i++) {
-		cout << arreglo[i] << "  ";
-	}
-
-	return (0);
+int impresionStrings() {
+    cout << "\nContenido del arreglo: \n ";
+    for (i = 0; i < n; i++) {
+        cout << arreglo[i] << "  ";
+    }
+    cout << "\n";
+    return (0);
 }
 
 
 // ================= Captura de numeros a procesar =================
 
 int numeroDatos() {
-	cout << "\nTeclee la cantidad de datos a procesar : ";
-	cin >> n;
-	return (0);
+    cout << "\nTeclee la cantidad de palabras a procesar : ";
+    cin >> n;
+    superior = n;
+    return (0);
 }
 
 
-// ================= Busqueda de caracteres =================
+// ================= Busqueda de strings =================
 
-int busquedaCaracteres (){
-	banderaEncontro = 0;
-	impresionCaracteres ();
-	cout<<"\nTeclee el caracter a buscar : ";
-	cin>>caracterBuscar;
-	for (i=0; i<n; i++){
-	    if (caracterBuscar == arreglo [i]){
-	        cout<<"\nCaracter encontrado en la posicion "<<i+1;
-	        banderaEncontro = 1;
-	    }
-	}
-	if (banderaEncontro == 0){
-	    cout<<"\nCaracter no encontrado en el arreglo ";
-	}
-	return (0);
+int busquedaStrings() {
+    banderaEncontro = 0;
+    impresionStrings();
+    cout << "\nTeclee la palabra a buscar : ";
+    cin >> caracterBuscar;
+    
+    for (i = 0; i < n; i++) {
+        if (caracterBuscar == arreglo[i]) {
+            cout << "\nPalabra encontrada en la posicion " << i + 1;
+            banderaEncontro = 1;
+        }
+    }
+    
+    if (banderaEncontro == 0) {
+        cout << "\nPalabra no encontrada en el arreglo ";
+    }
+    return (0);
 }
 
 
 // ================= Busqueda Binaria =================
 
-void busquedaBin(){
-	cout<<"\nTeclee el caracter a buscar en el arreglo :   ";
-	cin>>buscar;
-	busquedaBinaria();
-	if (arreglo[i] == buscar){
-	    cout<<"El valor  "<<buscar<<"  se encuentra en la posicion "<<i + 1;
-	}
-	else {
-	    cout<<"No se encontra el  valor  "<<buscar<<"  en el arreglo\n";
-	}
+void busquedaBin() {
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return;
+    }
+    cout << "\nTeclee la palabra a buscar en el arreglo :   ";
+    cin >> buscar;
+    busquedaBinaria();
+    if (arreglo[i] == buscar) {
+        cout << "La palabra \"" << buscar << "\" se encuentra en la posicion " << i + 1;
+    }
+    else {
+        cout << "No se encontro la palabra \"" << buscar << "\" en el arreglo\n";
+    }
 }
 
-int busquedaBinaria(){
-	inferior=0, superior=n;
-	while (superior >= inferior){
-	    i = (inferior + superior) / 2;
-	    if (arreglo[i] == buscar){
-	         return i;
-	    }
-	    else {
-	        if (buscar < arreglo [i]){
-	            superior = i-1;
-	        }
-	        else{
-	            inferior = i+1;
-	        }
-	    }
-	}
-	return (0);
+int busquedaBinaria() {
+    inferior = 0;
+    superior = n - 1;
+    
+    while (superior >= inferior) {
+        i = (inferior + superior) / 2;
+        if (arreglo[i] == buscar) {
+            return i;
+        }
+        else {
+            if (buscar < arreglo[i]) {
+                superior = i - 1;
+            }
+            else {
+                inferior = i + 1;
+            }
+        }
+    }
+    return (0);
 }
 
 
 // ================= Metodo burbuja =================
 
-int burbuja () {
-	impresionCaracteres ();
-	t_ini = clock();
-	cout << endl;
-	for (i=0; i<n-1; i++){
-	    for (j=i; j<n; j++){
-	        if (arreglo [i] > arreglo [j]) {
-	            aux = arreglo [i];
-	            arreglo[i] = arreglo [j];
-	            arreglo[j] = aux;
-	        }
-	    }
-	}
-	t_fin = clock();
-	impresionCaracteres ();
-
-	cout<<"\n\n Tiempo de ordenamiento por el metodo de Burbuja :  ";
-	secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
-	printf("%.16g milisegundos", secs * 1000.0);
-	cout<<"\n\n";
-
-	return (0);
+int burbuja() {
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    
+    cout << "\nOrdenando por metodo Burbuja...";
+    impresionStrings();
+    t_ini = clock();
+    
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (arreglo[i] > arreglo[j]) {
+                temporal = arreglo[i];
+                arreglo[i] = arreglo[j];
+                arreglo[j] = temporal;
+            }
+        }
+    }
+    
+    t_fin = clock();
+    cout << "\nArreglo ordenado: ";
+    impresionStrings();
+    
+    cout << "\n\n Tiempo de ordenamiento por el metodo de Burbuja :  ";
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+    printf("%.16g milisegundos", secs * 1000.0);
+    cout << "\n\n";
+    
+    return (0);
 }
 
 
 // ================= Metodo QuickSort =================
 
 void ordenamientoQuick() {
-	impresionCaracteres ();
-	quickSort (arreglo, 0, n-1);
-	cout << endl;
-	cout << endl;
-	cout << "\n" << endl;
-	impresionCaracteres ();
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return;
+    }
+    
+    cout << "\nOrdenando por metodo QuickSort...";
+    impresionStrings();
+    t_ini = clock();
+    quickSort(arreglo, 0, n - 1);
+    t_fin = clock();
+    cout << "\nArreglo ordenado: ";
+    impresionStrings();
+    
+    cout << "\n\n Tiempo de ordenamiento por el metodo de QuickSort :  ";
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+    printf("%.16g milisegundos", secs * 1000.0);
+    cout << "\n\n";
 }
 
-void quickSort (string &arreglo, int limite_izq, int limite_der){
-	izq = limite_izq;
-	der = limite_der;
-	pivote = arreglo[(izq + der)/2];
-	do{
-	    while (arreglo [izq] < pivote && izq < limite_der){
-	    	izq++;	
-		}
-	    while (pivote < arreglo[der] && der > limite_izq){
-	    	der--;
-		}
-	    if (izq <= der){
-	        temporal = arreglo[izq];
-	        arreglo[izq] = arreglo[der];
-	        arreglo[der] = temporal;
-	        izq++;
-	        der--;
-	    }
-	}while(izq <= der);    
-
-	if(limite_izq < der){
-		quickSort(arreglo, limite_izq, der);
-	}
-	if(limite_der > izq){
-		quickSort(arreglo, izq, limite_der);
-	}
+void quickSort(string arreglo[], int limite_izq, int limite_der) {
+    izq = limite_izq;
+    der = limite_der;
+    pivote = arreglo[(izq + der) / 2];
+    
+    do {
+        while (arreglo[izq] < pivote && izq < limite_der) {
+            izq++;
+        }
+        while (pivote < arreglo[der] && der > limite_izq) {
+            der--;
+        }
+        if (izq <= der) {
+            temporal = arreglo[izq];
+            arreglo[izq] = arreglo[der];
+            arreglo[der] = temporal;
+            izq++;
+            der--;
+        }
+    } while (izq <= der);
+    
+    if (limite_izq < der) {
+        quickSort(arreglo, limite_izq, der);
+    }
+    if (limite_der > izq) {
+        quickSort(arreglo, izq, limite_der);
+    }
 }
 
 
-// ================= Funciones de verificacion de caracteres (recorren el string) =================
+// ================= Funciones de verificacion de strings =================
 
 int identAlfaNumerico() {
-	cout << "\nVerificando caracter por caracter si es alfanumerico:\n";
-	for (i = 0; i < n; i++) {
-		if (isalnum(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es alfanumerico\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " es un simbolo\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si es alfanumerica:\n";
+    for (i = 0; i < n; i++) {
+        bool esAlfanumerico = true;
+        for (char c : arreglo[i]) {
+            if (!isalnum(c)) {
+                esAlfanumerico = false;
+                break;
+            }
+        }
+        if (esAlfanumerico) {
+            cout << "La palabra \"" << arreglo[i] << "\" es alfanumerica\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" contiene simbolos\n";
+        }
+    }
+    return (0);
 }
 
 int identLetra() {
-	cout << "\nVerificando caracter por caracter si es una letra:\n";
-	for (i = 0; i < n; i++) {
-		if (isalpha(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es una letra\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es una letra\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si contiene solo letras:\n";
+    for (i = 0; i < n; i++) {
+        bool sonLetras = true;
+        for (char c : arreglo[i]) {
+            if (!isalpha(c)) {
+                sonLetras = false;
+                break;
+            }
+        }
+        if (sonLetras) {
+            cout << "La palabra \"" << arreglo[i] << "\" solo tiene letras\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" no solo tiene letras\n";
+        }
+    }
+    return (0);
 }
 
 int identDigito() {
-	cout << "\nVerificando caracter por caracter si es un digito:\n";
-	for (i = 0; i < n; i++) {
-		if (isdigit(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es un digito\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es un digito\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si es un numero:\n";
+    for (i = 0; i < n; i++) {
+        bool sonDigitos = true;
+        for (char c : arreglo[i]) {
+            if (!isdigit(c)) {
+                sonDigitos = false;
+                break;
+            }
+        }
+        if (sonDigitos) {
+            cout << "La palabra \"" << arreglo[i] << "\" es un numero\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" no es un numero\n";
+        }
+    }
+    return (0);
 }
 
 int identMinuscula() {
-	cout << "\nVerificando caracter por caracter si es una minuscula:\n";
-	for (i = 0; i < n; i++) {
-		if (islower(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es una minuscula\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es una minuscula\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si esta en minusculas:\n";
+    for (i = 0; i < n; i++) {
+        bool sonMinusculas = true;
+        for (char c : arreglo[i]) {
+            if (isalpha(c) && !islower(c)) {
+                sonMinusculas = false;
+                break;
+            }
+        }
+        if (sonMinusculas) {
+            cout << "La palabra \"" << arreglo[i] << "\" esta en minusculas\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" NO esta en minusculas\n";
+        }
+    }
+    return (0);
 }
 
 int identMayuscula() {
-	cout << "\nVerificando caracter por caracter si es una mayuscula:\n";
-	for (i = 0; i < n; i++) {
-		if (isupper(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es una mayuscula\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es una mayuscula\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si esta en mayusculas:\n";
+    for (i = 0; i < n; i++) {
+        bool sonMayusculas = true;
+        for (char c : arreglo[i]) {
+            if (isalpha(c) && !isupper(c)) {
+                sonMayusculas = false;
+                break;
+            }
+        }
+        if (sonMayusculas) {
+            cout << "La palabra \"" << arreglo[i] << "\" esta en mayusculas\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" NO esta en mayusculas\n";
+        }
+    }
+    return (0);
 }
 
 int identEspacio() {
-	cout << "\nVerificando caracter por caracter si es un espacio en blanco:\n";
-	for (i = 0; i < n; i++) {
-		if (isspace(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es un espacio en blanco\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es un espacio en blanco\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si contiene espacios:\n";
+    for (i = 0; i < n; i++) {
+        bool tieneEspacio = false;
+        for (char c : arreglo[i]) {
+            if (isspace(c)) {
+                tieneEspacio = true;
+                break;
+            }
+        }
+        if (tieneEspacio) {
+            cout << "La palabra \"" << arreglo[i] << "\" contiene espacios\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" NO contiene espacios\n";
+        }
+    }
+    return (0);
 }
 
 int identPuntuacion() {
-	cout << "\nVerificando caracter por caracter si es un signo de puntuacion:\n";
-	for (i = 0; i < n; i++) {
-		if (ispunct(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es un signo de puntuacion\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es un signo de puntuacion\n";
-		}
-	}
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nVerificando cada palabra si contiene signos de puntuacion:\n";
+    for (i = 0; i < n; i++) {
+        bool tienePuntuacion = false;
+        for (char c : arreglo[i]) {
+            if (ispunct(c)) {
+                tienePuntuacion = true;
+                break;
+            }
+        }
+        if (tienePuntuacion) {
+            cout << "La palabra \"" << arreglo[i] << "\" contiene signos de puntuacion\n";
+        } else {
+            cout << "La palabra \"" << arreglo[i] << "\" NO contiene signos de puntuacion\n";
+        }
+    }
+    return (0);
 }
 
 int convertirMinuscula() {
-	cout << "\nConvirtiendo caracter por caracter a minuscula:\n";
-	cout << "Arreglo original: ";
-	for (i = 0; i < n; i++) {
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\nArreglo convertido: ";
-	for (i = 0; i < n; i++) {
-		arreglo[i] = tolower(arreglo[i]);
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\n";
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nConvirtiendo cada palabra a minuscula:\n";
+    cout << "Arreglo original: ";
+    for (i = 0; i < n; i++) {
+        cout << arreglo[i] << "  ";
+    }
+    cout << "\nArreglo convertido: ";
+    for (i = 0; i < n; i++) {
+        for (char &c : arreglo[i]) {
+            c = tolower(c);
+        }
+        cout << arreglo[i] << "  ";
+    }
+    cout << "\n";
+    return (0);
 }
 
 int convertirMayuscula() {
-	cout << "\nConvirtiendo caracter por caracter a mayuscula:\n";
-	cout << "Arreglo original: ";
-	for (i = 0; i < n; i++) {
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\nArreglo convertido: ";
-	for (i = 0; i < n; i++) {
-		arreglo[i] = toupper(arreglo[i]);
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\n";
-	return (0);
+    if (n == 0) {
+        cout << "\nPrimero debes capturar o leer datos";
+        return 0;
+    }
+    cout << "\nConvirtiendo cada palabra a mayuscula:\n";
+    cout << "Arreglo original: ";
+    for (i = 0; i < n; i++) {
+        cout << arreglo[i] << "  ";
+    }
+    cout << "\nArreglo convertido: ";
+    for (i = 0; i < n; i++) {
+        for (char &c : arreglo[i]) {
+            c = toupper(c);
+        }
+        cout << arreglo[i] << "  ";
+    }
+    cout << "\n";
+    return (0);
 }
 
 
 // ================= MAIN =================
 
 int main() {
-
-	for (repeticion = 0; repeticion == 0;) {
-
-		menu();
-
-		switch (opcion) {
-		case (1):
-			numeroDatos();
-			capturaCaracteres();
-			impresionCaracteres();
-			break;
-
-		case (2):
-			leeArchivo();
-			impresionCaracteres();
-			break;
-			
-		case (3):
-			impresionCaracteres();
-			break;
-
-		case (4):
-			busquedaCaracteres();
-			break;
-
-		case (5):
-			impresionCaracteres();
-			busquedaBin();
-			break;
-
-		case (6):
-			burbuja();
-			break;
-
-		case (7):
-			t_ini = clock();
-			ordenamientoQuick();
-			t_fin = clock();
-
-			cout<<"\n\n Tiempo de ordenamiento por el metodo de QuickSort :  ";
-			secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
-			printf("%.16g milisegundos", secs * 1000.0);
-			cout<<"\n\n";
-			break;
-
-		case (8):
-			identAlfaNumerico();
-			break;
-		
-		case (9):
-			identLetra();
-			break;
-
-		case (10):
-			identDigito();
-			break;
-
-		case (11):
-			identMinuscula();
-			break;
-
-		case (12):
-			identMayuscula();
-			break;
-
-		case (13):
-			identEspacio();
-			break;
-
-		case (14):
-			identPuntuacion();
-			break;
-
-		case (15):
-			convertirMinuscula();
-			break;
-
-		case (16):
-			convertirMayuscula();
-			break;
-
-		case (17):
-			guardaArchivo();
-			break;
-
-		case (18):
-			cout << "\nHasta luego";
-			repeticion++;
-			break;
-
-		default:
-			cout << "\nOpcion inválida";
-		}
-
-		cout << endl;
-		system("pause");
-	}
-
-	cout << endl;
-	system("pause");
+    for (repeticion = 0; repeticion == 0;) {
+        menu();
+        
+        switch (opcion) {
+        case (1):
+            numeroDatos();
+            capturaStrings();
+            impresionStrings();
+            break;
+            
+        case (2):
+            leeArchivo();
+            impresionStrings();
+            break;
+            
+        case (3):
+            impresionStrings();
+            break;
+            
+        case (4):
+            busquedaStrings();
+            break;
+            
+        case (5):
+            busquedaBin();
+            break;
+            
+        case (6):
+            burbuja();
+            break;
+            
+        case (7):
+            ordenamientoQuick();
+            break;
+            
+        case (8):
+            identAlfaNumerico();
+            break;
+            
+        case (9):
+            identLetra();
+            break;
+            
+        case (10):
+            identDigito();
+            break;
+            
+        case (11):
+            identMinuscula();
+            break;
+            
+        case (12):
+            identMayuscula();
+            break;
+            
+        case (13):
+            identEspacio();
+            break;
+            
+        case (14):
+            identPuntuacion();
+            break;
+            
+        case (15):
+            convertirMinuscula();
+            break;
+            
+        case (16):
+            convertirMayuscula();
+            break;
+            
+        case (17):
+            guardaArchivo();
+            break;
+            
+        case (18):
+            cout << "\nHasta luego";
+            repeticion++;
+            break;
+            
+        default:
+            cout << "\nOpcion invalida";
+        }
+        
+        cout << endl;
+        system("pause");
+    }
+    
+    cout << endl;
+    system("pause");
+    return (0);
 }
 
 
-// ================= MENu =================
+// ================= MENU =================
 
 int menu() {
-	system("cls");
-	cout << "\n Quirino Gonzalez Johann David";
-	cout << "\n\tMenu";
-	cout << "\n1 - Captura de caracteres";
-	cout << "\n2 - Lectura de archivo caracteres";
-	cout << "\n3 - Impresion de caracteres";
-	cout << "\n4 - Busqueda caracteres";
-	cout << "\n5 - Busqueda binaria";
-	cout << "\n6 - Metodo de ordenamiento Burbuja";
-	cout << "\n7 - Metodo de ordenamiento QuickSort";
-	cout << "\n8 - Identificar si el caracter es alfanumerico (isalnum)";
-	cout << "\n9 - Identificar si el caracter es una letra (isalpha)";
-	cout << "\n10 - Identificar si el caracter es un digito (isdigit)";
-	cout << "\n11 - Identificar si el caracter es una minuscula (islower)";
-	cout << "\n12 - Identificar si el caracter es una mayuscula (isupper)";
-	cout << "\n13 - Identificar si el caracter es un espacio en blanco (isspace)";
-	cout << "\n14 - Identificar si el caracter es un signo de puntuacion (ispunct)";
-	cout << "\n15 - Convertir todo a minuscula (tolower)";
-	cout << "\n16 - Convertir todo a mayuscula (toupper)";
-	cout << "\n17 - Guardar archivo";
-	cout << "\n18 - Salir del menu";
-	cout << "\nTeclee la opcion deseada : ";
-	cin >> opcion;
-
-	return (0);
+    system("cls");
+    cout << "\n Quirino Gonzalez Johann David";
+    cout << "\n\tMenu - MANEJO DE STRINGS";
+    cout << "\n1 - Captura de strings";
+    cout << "\n2 - Lectura de archivo de strings";
+    cout << "\n3 - Impresion de strings";
+    cout << "\n4 - Busqueda de strings";
+    cout << "\n5 - Busqueda binaria";
+    cout << "\n6 - Metodo de ordenamiento Burbuja";
+    cout << "\n7 - Metodo de ordenamiento QuickSort";
+    cout << "\n8 - Identificar si el string es alfanumerico (isalnum)";
+    cout << "\n9 - Identificar si el string es una letra (isalpha)";
+    cout << "\n10 - Identificar si el string es un digito (isdigit)";
+    cout << "\n11 - Identificar si el string es minuscula (islower)";
+    cout << "\n12 - Identificar si el string es mayuscula (isupper)";
+    cout << "\n13 - Identificar si el string tiene espacios (isspace)";
+    cout << "\n14 - Identificar si el string tiene puntuacion (ispunct)";
+    cout << "\n15 - Convertir todo a minuscula (tolower)";
+    cout << "\n16 - Convertir todo a mayuscula (toupper)";
+    cout << "\n17 - Guardar archivo";
+    cout << "\n18 - Salir del menu";
+    cout << "\nTeclee la opcion deseada : ";
+    cin >> opcion;
+    
+    return (0);
 }
