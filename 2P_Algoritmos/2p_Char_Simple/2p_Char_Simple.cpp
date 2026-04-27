@@ -11,17 +11,19 @@ using namespace std;
 // ================= Declaracion de variables globales =================
 int i = 0;
 int j = 0;
+int l = 0;  // Variable para impresion de pasadas
 int opcion = 0;
 int repeticion = 0;
 char caracterBuscar;
 char aux;
+char numMayor;  // Variable para flotacion
 
 
 //Banderas
 int banderaEncontro = 0;
 
 // ================= Declaracion variables para manejo de archivos =================
-string arreglo;
+char arreglo[100];
 int n = 0;
 int cn = 0;
 int guardacn = 0;
@@ -54,19 +56,13 @@ int leeArchivo();
 int guardaArchivo();
 int busquedaCaracteres();
 int burbuja();
+int flotacion();
+int shell();
 void ordenamientoQuick();
-void quickSort (string &arreglo, int limite_izq, int limite_der);
+void quickSort (char arreglo[], int limite_izq, int limite_der);
 void busquedaBin();
 int busquedaBinaria();
-int identAlfaNumerico();
-int identLetra();
-int identDigito();
-int identMinuscula();
-int identMayuscula();
-int identEspacio();
-int identPuntuacion();
-int convertirMinuscula();
-int convertirMayuscula();
+int identAlfaNumerico();  // Este se mantiene
 
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
@@ -121,11 +117,10 @@ int leeArchivo() {
 	}
 
 	cn = 0;
-	arreglo = "";
 
 	for (int i = 0; !feof(archivo1); i++) {
 		fscanf(archivo1, "%c\n", &entrada.valor);
-		arreglo += entrada.valor;
+		arreglo[i] = entrada.valor;
 		cn++;
 	}
 
@@ -186,6 +181,7 @@ int impresionCaracteres() {
 	for (i = 0; i < n; i++) {
 		cout << arreglo[i] << "  ";
 	}
+	cout << endl;
 
 	return (0);
 }
@@ -281,6 +277,87 @@ int burbuja () {
 }
 
 
+// ================= Metodo Flotacion =================
+
+int flotacion (){
+	impresionCaracteres ();
+	t_ini = clock();
+	
+	for (i=0; i < n-1; i++){ 
+    	//Intercambio
+    	for (j=0; j < n-1; j++){
+        	if (arreglo[j] > arreglo[j+1]) {
+            	numMayor = arreglo[j];
+            	arreglo[j] = arreglo[j + 1];
+            	arreglo[j + 1] = numMayor;
+        	}      
+    	}	
+    	cout<<"\nPasada "<<i+1<<" observe los intercambios ";
+		impresionCaracteres ();   
+	}
+	
+	t_fin = clock();
+	impresionCaracteres ();
+	
+	cout<<"\n\n Tiempo de ordenamiento por el metodo de Flotacion :  ";
+	secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+	printf("%.16g milisegundos", secs * 1000.0);
+	cout<<"\n\n";
+	
+	return (0);
+}
+
+
+// ================= Metodo Shell =================
+
+int shell(){
+	int subarreglo=0;
+	char temp;
+	
+	impresionCaracteres ();
+	t_ini = clock();
+	
+    subarreglo = n/2;
+    while (subarreglo > 0) {
+        for (i=subarreglo; i < n; i++) {
+            j = i;
+            temp = arreglo[i];
+            while ((j >= subarreglo) && (arreglo[j - subarreglo] > temp)) {
+                arreglo[j] = arreglo[j - subarreglo];
+                j = j - subarreglo;
+            }
+            arreglo[j] = temp;
+			//Impresion de pasadas            
+            cout<<endl<<endl;
+            cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
+ 	        cout<<"\nQue contiene el numero \n";
+           for (l=0; l<n; l++){
+       	        cout<<arreglo [l]<< "   ";
+	        }
+        }
+        
+	    //Impresion de pasada por pasada
+		cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
+		cout<<"\nQue contiene el numero \n";
+    	for (l=0; l<n; l++){
+    		cout<<arreglo [l]<< "   ";
+		}		
+        subarreglo /= 2;
+    }
+    cout<<endl;
+	
+	t_fin = clock();
+	impresionCaracteres ();
+	
+	cout<<"\n\n Tiempo de ordenamiento por el metodo de Shell :  ";
+	secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+	printf("%.16g milisegundos", secs * 1000.0);
+	cout<<"\n\n";
+	
+    return (0);
+}
+
+
 // ================= Metodo QuickSort =================
 
 void ordenamientoQuick() {
@@ -292,7 +369,7 @@ void ordenamientoQuick() {
 	impresionCaracteres ();
 }
 
-void quickSort (string &arreglo, int limite_izq, int limite_der){
+void quickSort (char arreglo[], int limite_izq, int limite_der){
 	izq = limite_izq;
 	der = limite_der;
 	pivote = arreglo[(izq + der)/2];
@@ -321,119 +398,17 @@ void quickSort (string &arreglo, int limite_izq, int limite_der){
 }
 
 
-// ================= Funciones de verificacion de caracteres (recorren el string) =================
+// ================= Funcion de verificacion de caracteres (solo alfanumerico) =================
 
 int identAlfaNumerico() {
 	cout << "\nVerificando caracter por caracter si es alfanumerico:\n";
 	for (i = 0; i < n; i++) {
-		if (isalnum(arreglo[i])) {
+		if ((arreglo[i] >= 'A' && arreglo[i] <= 'Z') || (arreglo[i] >= 'a' && arreglo[i] <= 'z') || (arreglo[i] >= '0' && arreglo[i] <= '9')) {
 			cout << "El caracter " << arreglo[i] << " es alfanumerico\n";
 		} else {
 			cout << "El caracter " << arreglo[i] << " es un simbolo\n";
 		}
 	}
-	return (0);
-}
-
-int identLetra() {
-	cout << "\nVerificando caracter por caracter si es una letra:\n";
-	for (i = 0; i < n; i++) {
-		if (isalpha(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es una letra\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es una letra\n";
-		}
-	}
-	return (0);
-}
-
-int identDigito() {
-	cout << "\nVerificando caracter por caracter si es un digito:\n";
-	for (i = 0; i < n; i++) {
-		if (isdigit(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es un digito\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es un digito\n";
-		}
-	}
-	return (0);
-}
-
-int identMinuscula() {
-	cout << "\nVerificando caracter por caracter si es una minuscula:\n";
-	for (i = 0; i < n; i++) {
-		if (islower(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es una minuscula\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es una minuscula\n";
-		}
-	}
-	return (0);
-}
-
-int identMayuscula() {
-	cout << "\nVerificando caracter por caracter si es una mayuscula:\n";
-	for (i = 0; i < n; i++) {
-		if (isupper(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es una mayuscula\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es una mayuscula\n";
-		}
-	}
-	return (0);
-}
-
-int identEspacio() {
-	cout << "\nVerificando caracter por caracter si es un espacio en blanco:\n";
-	for (i = 0; i < n; i++) {
-		if (isspace(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es un espacio en blanco\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es un espacio en blanco\n";
-		}
-	}
-	return (0);
-}
-
-int identPuntuacion() {
-	cout << "\nVerificando caracter por caracter si es un signo de puntuacion:\n";
-	for (i = 0; i < n; i++) {
-		if (ispunct(arreglo[i])) {
-			cout << "El caracter " << arreglo[i] << " es un signo de puntuacion\n";
-		} else {
-			cout << "El caracter " << arreglo[i] << " no es un signo de puntuacion\n";
-		}
-	}
-	return (0);
-}
-
-int convertirMinuscula() {
-	cout << "\nConvirtiendo caracter por caracter a minuscula:\n";
-	cout << "Arreglo original: ";
-	for (i = 0; i < n; i++) {
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\nArreglo convertido: ";
-	for (i = 0; i < n; i++) {
-		arreglo[i] = tolower(arreglo[i]);
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\n";
-	return (0);
-}
-
-int convertirMayuscula() {
-	cout << "\nConvirtiendo caracter por caracter a mayuscula:\n";
-	cout << "Arreglo original: ";
-	for (i = 0; i < n; i++) {
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\nArreglo convertido: ";
-	for (i = 0; i < n; i++) {
-		arreglo[i] = toupper(arreglo[i]);
-		cout << arreglo[i] << "  ";
-	}
-	cout << "\n";
 	return (0);
 }
 
@@ -462,20 +437,28 @@ int main() {
 			impresionCaracteres();
 			break;
 
-		case (4):
+		case (4): //Secuencial
 			busquedaCaracteres();
 			break;
 
-		case (5):
+		case (5):		//Busqueda binaria
 			impresionCaracteres();
 			busquedaBin();
 			break;
 
-		case (6):
+		case (6):		//Burbuja
 			burbuja();
 			break;
+			
+		case (7):		//Flotacion
+			flotacion();
+			break;
+		
+		case (8):		//Shell
+			shell();
+			break;
 
-		case (7):
+		case (9):		//QuickSort
 			t_ini = clock();
 			ordenamientoQuick();
 			t_fin = clock();
@@ -486,47 +469,15 @@ int main() {
 			cout<<"\n\n";
 			break;
 
-		case (8):
+		case (10):      // Identificador alfanumerico (se mantiene)
 			identAlfaNumerico();
-			break;
-		
-		case (9):
-			identLetra();
-			break;
-
-		case (10):
-			identDigito();
 			break;
 
 		case (11):
-			identMinuscula();
-			break;
-
-		case (12):
-			identMayuscula();
-			break;
-
-		case (13):
-			identEspacio();
-			break;
-
-		case (14):
-			identPuntuacion();
-			break;
-
-		case (15):
-			convertirMinuscula();
-			break;
-
-		case (16):
-			convertirMayuscula();
-			break;
-
-		case (17):
 			guardaArchivo();
 			break;
 
-		case (18):
+		case (12):
 			cout << "\nHasta luego";
 			repeticion++;
 			break;
@@ -544,7 +495,7 @@ int main() {
 }
 
 
-// ================= MENu =================
+// ================= MENU =================
 
 int menu() {
 	system("cls");
@@ -553,21 +504,15 @@ int menu() {
 	cout << "\n1 - Captura de caracteres";
 	cout << "\n2 - Lectura de archivo caracteres";
 	cout << "\n3 - Impresion de caracteres";
-	cout << "\n4 - Busqueda caracteres";
-	cout << "\n5 - Busqueda binaria";
+	cout << "\n4 - Busqueda Secuencial";
+	cout << "\n5 - Busqueda Binaria";
 	cout << "\n6 - Metodo de ordenamiento Burbuja";
-	cout << "\n7 - Metodo de ordenamiento QuickSort";
-	cout << "\n8 - Identificar si el caracter es alfanumerico (isalnum)";
-	cout << "\n9 - Identificar si el caracter es una letra (isalpha)";
-	cout << "\n10 - Identificar si el caracter es un digito (isdigit)";
-	cout << "\n11 - Identificar si el caracter es una minuscula (islower)";
-	cout << "\n12 - Identificar si el caracter es una mayuscula (isupper)";
-	cout << "\n13 - Identificar si el caracter es un espacio en blanco (isspace)";
-	cout << "\n14 - Identificar si el caracter es un signo de puntuacion (ispunct)";
-	cout << "\n15 - Convertir todo a minuscula (tolower)";
-	cout << "\n16 - Convertir todo a mayuscula (toupper)";
-	cout << "\n17 - Guardar archivo";
-	cout << "\n18 - Salir del menu";
+	cout << "\n7 - Metodo de ordenamiento Flotacion";
+	cout << "\n8 - Metodo de ordenamiento Shell";
+	cout << "\n9 - Metodo de ordenamiento QuickSort";
+	cout << "\n10 - Identificar si el caracter es alfanumerico";
+	cout << "\n11 - Guardar archivo";
+	cout << "\n12 - Salir del menu";
 	cout << "\nTeclee la opcion deseada : ";
 	cin >> opcion;
 
