@@ -85,7 +85,6 @@ string nombreArchivoS;   // Nombre del archivo de salida
 
 int capturaCaracteres() {
 
-	// COMENTADO: cout << "\nTeclee " << n << " caracteres separados por un espacio : ";
 	cout << "\nTeclee " << n << " caracteres separados por un espacio : ";
 
 	for (i = 0; i < n; i++) {
@@ -102,7 +101,6 @@ int leeArchivo() {
 
 	FILE *archivo1;
 
-	// COMENTADO: cout << "\nTeclea el nombre del archivo de entrada (sin espacio, ni caracteres especiales):   ";
 	cout << "\nTeclea el nombre del archivo de entrada (sin espacio, ni caracteres especiales):   ";
 	cin >> nombreArchivoE;
 
@@ -111,12 +109,10 @@ int leeArchivo() {
 	archivo1 = fopen(nombreArchivoE.c_str(), "r");
 
 	if (archivo1 == NULL) {
-		// COMENTADO: cout << "\nNo se puede abrir el archivo ";
 		cout << "\nNo se puede abrir el archivo ";
 		exit(1);
 	}
 	else {
-		// COMENTADO: cout << "\nSe abrio correctamente el archivo " << nombreArchivoE.c_str();
 		cout << "\nSe abrio correctamente el archivo " << nombreArchivoE.c_str();
 	}
 
@@ -128,8 +124,6 @@ int leeArchivo() {
 		cn++;
 	}
 
-	// COMENTADO: cout << "\n\nSe ha generado el arreglo con los datos del archivo de entrada";
-	// COMENTADO: cout << "\nLa cantidad de numeros contenidos en el arreglo son:  " << cn << "\n\n";
 	cout << "\n\nSe ha generado el arreglo con los datos del archivo de entrada";
 	cout << "\nLa cantidad de numeros contenidos en el arreglo son:  " << cn << "\n\n";
 
@@ -152,16 +146,13 @@ int guardaArchivo() {
 	archivo2 = fopen(nombreArchivoS.c_str(), "w");
 
 	if (archivo2 == NULL) {
-		// COMENTADO: cout << "\nNo se puede abrir el archivo ";
 		cout << "\nNo se puede abrir el archivo ";
 		exit(1);
 	}
 	else {
-		// COMENTADO: cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
 		cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
 	}
 
-	// COMENTADO: cout << "\n\nGuarda los numeros contenidos en el arreglo en el archivo";
 	cout << "\n\nGuarda los numeros contenidos en el arreglo en el archivo";
 
 	guardacn = 0;
@@ -172,8 +163,6 @@ int guardaArchivo() {
 		guardacn++;
 	}
 
-	// COMENTADO: cout << "\n\nTotal de numeros guardados en el segundo archivo son: " << guardacn;
-	// COMENTADO: cout << "\n\n";
 	cout << "\n\nTotal de numeros guardados en el segundo archivo son: " << guardacn;
 	cout << "\n\n";
 
@@ -187,7 +176,6 @@ int guardaArchivo() {
 
 int impresionCaracteres() {
 
-	// COMENTADO: cout << "\nContenido del arreglo: \n ";
 	cout << "\nContenido del arreglo: \n ";
 
 	for (i = 0; i < n; i++) {
@@ -202,7 +190,6 @@ int impresionCaracteres() {
 // ================= Captura de numeros a procesar =================
 
 int numeroDatos() {
-	// COMENTADO: cout << "\nTeclee la cantidad de datos a procesar : ";
 	cout << "\nTeclee la cantidad de datos a procesar : ";
 	cin >> n;
 	return (0);
@@ -214,18 +201,15 @@ int numeroDatos() {
 int busquedaCaracteres (){
 	banderaEncontro = 0;
 	impresionCaracteres ();
-	// COMENTADO: cout<<"\nTeclee el caracter a buscar : ";
 	cout<<"\nTeclee el caracter a buscar : ";
 	cin>>caracterBuscar;
 	for (i=0; i<n; i++){
 	    if (caracterBuscar == arreglo [i]){
-	        // COMENTADO: cout<<"\nCaracter encontrado en la posicion "<<i+1;
 	        cout<<"\nCaracter encontrado en la posicion "<<i+1;
 	        banderaEncontro = 1;
 	    }
 	}
 	if (banderaEncontro == 0){
-	    // COMENTADO: cout<<"\nCaracter no encontrado en el arreglo ";
 	    cout<<"\nCaracter no encontrado en el arreglo ";
 	}
 	return (0);
@@ -235,16 +219,13 @@ int busquedaCaracteres (){
 // ================= Busqueda Binaria =================
 
 void busquedaBin(){
-	// COMENTADO: cout<<"\nTeclee el caracter a buscar en el arreglo :   ";
 	cout<<"\nTeclee el caracter a buscar en el arreglo :   ";
 	cin>>buscar;
 	busquedaBinaria();
 	if (arreglo[i] == buscar){
-	    // COMENTADO: cout<<"El valor  "<<buscar<<"  se encuentra en la posicion "<<i + 1;
 	    cout<<"El valor  "<<buscar<<"  se encuentra en la posicion "<<i + 1;
 	}
 	else {
-	    // COMENTADO: cout<<"No se encontra el  valor  "<<buscar<<"  en el arreglo\n";
 	    cout<<"No se encontra el  valor  "<<buscar<<"  en el arreglo\n";
 	}
 }
@@ -272,9 +253,8 @@ int busquedaBinaria(){
 // ================= Metodo burbuja =================
 
 int burbuja () {
-	impresionCaracteres ();
+	//impresionCaracteres ();
 	t_ini = clock();
-	// COMENTADO: cout << endl;
 	cout << endl;
 	for (i=0; i<n-1; i++){
 	    for (j=i; j<n; j++){
@@ -286,13 +266,11 @@ int burbuja () {
 	    }
 	}
 	t_fin = clock();
-	impresionCaracteres ();
+	//impresionCaracteres ();
 
-	// COMENTADO: cout<<"\n\n Tiempo de ordenamiento por el metodo de Burbuja :  ";
 	cout<<"\n\n Tiempo de ordenamiento por el metodo de Burbuja :  ";
 	secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
 	printf("%.16g milisegundos", secs * 1000.0);
-	// COMENTADO: cout<<"\n\n";
 	cout<<"\n\n";
 
 	return (0);
@@ -302,7 +280,7 @@ int burbuja () {
 // ================= Metodo Flotacion =================
 
 int flotacion (){
-	impresionCaracteres ();
+	//impresionCaracteres ();
 	t_ini = clock();
 	
 	for (i=0; i < n-1; i++){ 
@@ -314,19 +292,16 @@ int flotacion (){
             	arreglo[j + 1] = numMayor;
         	}      
     	}	
-    	// COMENTADO: cout<<"\nPasada "<<i+1<<" observe los intercambios ";
-    	cout<<"\nPasada "<<i+1<<" observe los intercambios ";
-		impresionCaracteres ();   
+    	//cout<<"\nPasada "<<i+1<<" observe los intercambios ";
+		//impresionCaracteres ();   
 	}
 	
 	t_fin = clock();
-	impresionCaracteres ();
+	//impresionCaracteres ();
 	
-	// COMENTADO: cout<<"\n\n Tiempo de ordenamiento por el metodo de Flotacion :  ";
 	cout<<"\n\n Tiempo de ordenamiento por el metodo de Flotacion :  ";
 	secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
 	printf("%.16g milisegundos", secs * 1000.0);
-	// COMENTADO: cout<<"\n\n";
 	cout<<"\n\n";
 	
 	return (0);
@@ -339,7 +314,7 @@ int shell(){
 	int subarreglo=0;
 	char temp;
 	
-	impresionCaracteres ();
+	//impresionCaracteres ();
 	t_ini = clock();
 	
     subarreglo = n/2;
@@ -352,38 +327,31 @@ int shell(){
                 j = j - subarreglo;
             }
             arreglo[j] = temp;
-			//Impresion de pasadas (COMENTADO todo el bloque de impresion dentro del for)
-            /* COMENTADO:
-            cout<<endl<<endl;
+			//Impresion de pasadas (comentado)            
+            /*cout<<endl<<endl;
             cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
  	        cout<<"\nQue contiene el numero \n";
            for (l=0; l<n; l++){
        	        cout<<arreglo [l]<< "   ";
-	        }
-            */
+	        }*/
         }
         
-	    //Impresion de pasada por pasada (COMENTADO todo el bloque)
-	    /* COMENTADO:
-		cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
+	    //Impresion de pasada por pasada (comentado)
+		/*cout<<"\nInicia subarreglo en la posicion :  "<<subarreglo<< "   y contiene  "<<arreglo[subarreglo];
 		cout<<"\nQue contiene el numero \n";
     	for (l=0; l<n; l++){
     		cout<<arreglo [l]<< "   ";
-		}
-		*/		
+		}*/		
         subarreglo /= 2;
     }
-    // COMENTADO: cout<<endl;
     cout<<endl;
 	
 	t_fin = clock();
-	impresionCaracteres ();
+	//impresionCaracteres ();
 	
-	// COMENTADO: cout<<"\n\n Tiempo de ordenamiento por el metodo de Shell :  ";
 	cout<<"\n\n Tiempo de ordenamiento por el metodo de Shell :  ";
 	secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
 	printf("%.16g milisegundos", secs * 1000.0);
-	// COMENTADO: cout<<"\n\n";
 	cout<<"\n\n";
 	
     return (0);
@@ -393,15 +361,12 @@ int shell(){
 // ================= Metodo QuickSort =================
 
 void ordenamientoQuick() {
-	impresionCaracteres ();
+	//impresionCaracteres ();
 	quickSort (arreglo, 0, n-1);
-	// COMENTADO: cout << endl;
-	// COMENTADO: cout << endl;
-	// COMENTADO: cout << "\n" << endl;
 	cout << endl;
 	cout << endl;
 	cout << "\n" << endl;
-	impresionCaracteres ();
+	//impresionCaracteres ();
 }
 
 void quickSort (char arreglo[], int limite_izq, int limite_der){
@@ -436,14 +401,11 @@ void quickSort (char arreglo[], int limite_izq, int limite_der){
 // ================= Funcion de verificacion de caracteres (solo alfanumerico) =================
 
 int identAlfaNumerico() {
-	// COMENTADO: cout << "\nVerificando caracter por caracter si es alfanumerico:\n";
 	cout << "\nVerificando caracter por caracter si es alfanumerico:\n";
 	for (i = 0; i < n; i++) {
 		if ((arreglo[i] >= 'A' && arreglo[i] <= 'Z') || (arreglo[i] >= 'a' && arreglo[i] <= 'z') || (arreglo[i] >= '0' && arreglo[i] <= '9')) {
-			// COMENTADO: cout << "El caracter " << arreglo[i] << " es alfanumerico\n";
 			cout << "El caracter " << arreglo[i] << " es alfanumerico\n";
 		} else {
-			// COMENTADO: cout << "El caracter " << arreglo[i] << " es un simbolo\n";
 			cout << "El caracter " << arreglo[i] << " es un simbolo\n";
 		}
 	}
@@ -501,11 +463,9 @@ int main() {
 			ordenamientoQuick();
 			t_fin = clock();
 
-			// COMENTADO: cout<<"\n\n Tiempo de ordenamiento por el metodo de QuickSort :  ";
 			cout<<"\n\n Tiempo de ordenamiento por el metodo de QuickSort :  ";
 			secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
 			printf("%.16g milisegundos", secs * 1000.0);
-			// COMENTADO: cout<<"\n\n";
 			cout<<"\n\n";
 			break;
 
@@ -518,22 +478,18 @@ int main() {
 			break;
 
 		case (12):
-			// COMENTADO: cout << "\nHasta luego";
 			cout << "\nHasta luego";
 			repeticion++;
 			break;
 
 		default:
-			// COMENTADO: cout << "\nOpcion inválida";
 			cout << "\nOpcion inválida";
 		}
 
-		// COMENTADO: cout << endl;
 		cout << endl;
 		system("pause");
 	}
 
-	// COMENTADO: cout << endl;
 	cout << endl;
 	system("pause");
 }
@@ -543,21 +499,6 @@ int main() {
 
 int menu() {
 	system("cls");
-	// COMENTADO: cout << "\n Quirino Gonzalez Johann David";
-	// COMENTADO: cout << "\n\tMenu";
-	// COMENTADO: cout << "\n1 - Captura de caracteres";
-	// COMENTADO: cout << "\n2 - Lectura de archivo caracteres";
-	// COMENTADO: cout << "\n3 - Impresion de caracteres";
-	// COMENTADO: cout << "\n4 - Busqueda Secuencial";
-	// COMENTADO: cout << "\n5 - Busqueda Binaria";
-	// COMENTADO: cout << "\n6 - Metodo de ordenamiento Burbuja";
-	// COMENTADO: cout << "\n7 - Metodo de ordenamiento Flotacion";
-	// COMENTADO: cout << "\n8 - Metodo de ordenamiento Shell";
-	// COMENTADO: cout << "\n9 - Metodo de ordenamiento QuickSort";
-	// COMENTADO: cout << "\n10 - Identificar si el caracter es alfanumerico";
-	// COMENTADO: cout << "\n11 - Guardar archivo";
-	// COMENTADO: cout << "\n12 - Salir del menu";
-	// COMENTADO: cout << "\nTeclee la opcion deseada : ";
 	cout << "\n Quirino Gonzalez Johann David";
 	cout << "\n\tMenu";
 	cout << "\n1 - Captura de caracteres";

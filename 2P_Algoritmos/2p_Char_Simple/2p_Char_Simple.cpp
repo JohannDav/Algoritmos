@@ -110,7 +110,8 @@ int leeArchivo() {
 
 	if (archivo1 == NULL) {
 		cout << "\nNo se puede abrir el archivo ";
-		exit(1);
+		//exit(1); MANEJO DE ERROR EN NOMBRE DEL ARCHIVO
+		return (0);
 	}
 	else {
 		cout << "\nSe abrio correctamente el archivo " << nombreArchivoE.c_str();
