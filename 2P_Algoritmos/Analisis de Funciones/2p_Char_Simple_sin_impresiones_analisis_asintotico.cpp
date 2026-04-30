@@ -23,7 +23,7 @@ char numMayor;  // Variable para flotacion
 int banderaEncontro = 0;
 
 // ================= Declaracion variables para manejo de archivos =================
-char arreglo[100];
+char arreglo[1000000];
 int n = 0;
 int cn = 0;
 int guardacn = 0;
