@@ -5,6 +5,7 @@
 #include <fstream>
 #include <time.h>
 #include <string>
+#include <cmath>  // Para usar la funcion M_PI y sqrt
 using namespace std;
 
 // ================= Declaracion de variables globales =================
@@ -32,7 +33,7 @@ int limite_der=0;				//Quick Sort, limite_izq = 0, limite_der = n-1
 clock_t t_ini, t_fin;			//Tiempo
 double secs;					//Tiempo
 string nombreArchivoE;
-string nombreArchivoS = Quirino;
+string nombreArchivoS;
 
 // Banderas
 int hayDatos = 0;        // Bandera para validar si hay datos en el arreglo
@@ -66,7 +67,7 @@ void identificar_mayor(int arreglo[], int i, int n);
 void conformar_arbol(int arreglo[], int n);
 void ordenamientoQuick();
 void quickSort(int arreglo[], int limite_izq, int limite_der);
-int identificacionCaracteres();  // Solo como ejemplo (identifica si es digito o no)
+int calculosGeometricos();  // NUEVA FUNCION para la opcion 13 del menu
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
 struct Entrada {
@@ -490,7 +491,7 @@ int seleccion() {
 int shell() {
     // Validacion: No se puede ordenar si no hay datos
     if (hayDatos == 0) {
-        cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
+        cout << "\n*** ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. ***\n";
         return (0);
     }
 
@@ -575,7 +576,7 @@ void heapSort() {
 int ordenamientoHeapSort() {
     // Validacion: No se puede ordenar si no hay datos
     if (hayDatos == 0) {
-        cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
+        cout << "\n*** ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. ***\n";
         return (0);
     }
 
@@ -607,7 +608,7 @@ int ordenamientoHeapSort() {
 void ordenamientoQuick() {
     // Validacion: No se puede ordenar si no hay datos
     if (hayDatos == 0) {
-        cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
+        cout << "\n*** ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. ***\n";
         return;
     }
 
@@ -661,60 +662,97 @@ void quickSort(int arreglo[], int limite_izq, int limite_der) {
     }
 }
 
-// ================= Funcion para el Examen (Identificacion de caracteres/numeros) =================
-int identificacionCaracteres() {
-    // Validacion: No se puede identificar si no hay datos
+// ================= NUEVA FUNCION: Calculos Geometricos (Opcion 13 del Menu) =================
+// Funcion necesaria: calculosGeometricos() - Reemplaza a identificacionCaracteres()
+int calculosGeometricos() {
+    // Validacion: No se puede calcular si no hay datos
     if (hayDatos == 0) {
-        cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
+        cout << "\n*** ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. ***\n";
         return (0);
     }
 
-    cout << "\n=== EXAMEN - IDENTIFICACION DE NUMEROS ===\n";
-    cout << "El programa identifica numeros primos, pares, impares, etc.\n";
-    cout << "\n--- CONTENIDO DEL ARREGLO ---";
-    impresionNumeros();
+    const double PI = 3.14159265358979323846;
+    double areaCirculo, areaCuadrado, areaRectangulo, areaTriangulo;
+    int baseRectangulo;
+
     cout << "\n";
-
-    int contadorPares = 0;
-    int contadorImpares = 0;
-    int contadorPrimos = 0;
-
+    cout << "================================================================================" << endl;
+    cout << "                    CALCULOS GEOMETRICOS A PARTIR DEL ARCHIVO                   " << endl;
+    cout << "================================================================================" << endl;
+    
+    cout << "\n--- NUMEROS DEL ARCHIVO ---" << endl;
     for (i = 0; i < n; i++) {
-        // Verificar si es par o impar
-        if (arreglo[i] % 2 == 0) {
-            cout << "El numero " << arreglo[i] << " es PAR\n";
-            contadorPares++;
-        } else {
-            cout << "El numero " << arreglo[i] << " es IMPAR\n";
-            contadorImpares++;
-        }
-
-        // Verificar si es primo (solo para numeros mayores a 1)
-        int esPrimo = 1;
-        if (arreglo[i] <= 1) {
-            esPrimo = 0;
-        } else {
-            for (int d = 2; d * d <= arreglo[i]; d++) {
-                if (arreglo[i] % d == 0) {
-                    esPrimo = 0;
-                    break;
-                }
-            }
-        }
-        if (esPrimo) {
-            cout << "El numero " << arreglo[i] << " es PRIMO\n";
-            contadorPrimos++;
-        }
-        cout << "------------------------\n";
+        cout << "Dato " << i+1 << ": " << arreglo[i] << endl;
     }
-
-    cout << "\n--- RESUMEN ---";
-    cout << "\nTotal de numeros pares: " << contadorPares;
-    cout << "\nTotal de numeros impares: " << contadorImpares;
-    cout << "\nTotal de numeros primos: " << contadorPrimos;
-    cout << "\nTotal de numeros analizados: " << n;
-    cout << "\n";
-
+    
+    // ================= 1. CALCULO DE AREAS DE CIRCULOS =================
+    cout << "\n================================================================================" << endl;
+    cout << "              CALCULO DE LAS AREAS DE LOS CIRCULOS (radio = numero)" << endl;
+    cout << "================================================================================" << endl;
+    cout << "Formula: Area = π * r^2" << endl;
+    cout << "--------------------------------------------------------" << endl;
+    
+    for (i = 0; i < n; i++) {
+        areaCirculo = PI * arreglo[i] * arreglo[i];
+        cout << "Circulo " << i+1 << ": radio = " << arreglo[i] 
+             << " -> Area = π * (" << arreglo[i] << ")^2 = " << areaCirculo << endl;
+    }
+    
+    // ================= 2. CALCULO DE AREAS DE CUADRADOS =================
+    cout << "\n================================================================================" << endl;
+    cout << "              CALCULO DE LAS AREAS DE LOS CUADRADOS (lado = numero)" << endl;
+    cout << "================================================================================" << endl;
+    cout << "Formula: Area = lado^2" << endl;
+    cout << "--------------------------------------------------------" << endl;
+    
+    for (i = 0; i < n; i++) {
+        areaCuadrado = arreglo[i] * arreglo[i];
+        cout << "Cuadrado " << i+1 << ": lado = " << arreglo[i] 
+             << " -> Area = (" << arreglo[i] << ")^2 = " << areaCuadrado << endl;
+    }
+    
+    // ================= 3. CALCULO DE AREAS DE RECTANGULOS =================
+    cout << "\n================================================================================" << endl;
+    cout << "          CALCULO DE LAS AREAS DE LOS RECTANGULOS" << endl;
+    cout << "   (altura = numero, base = numero + 1)" << endl;
+    cout << "================================================================================" << endl;
+    cout << "Formula: Area = base * altura" << endl;
+    cout << "--------------------------------------------------------" << endl;
+    
+    for (i = 0; i < n; i++) {
+        baseRectangulo = arreglo[i] + 1;
+        areaRectangulo = baseRectangulo * arreglo[i];
+        cout << "Rectangulo " << i+1 << ": altura = " << arreglo[i] 
+             << ", base = " << baseRectangulo 
+             << " -> Area = " << baseRectangulo << " * " << arreglo[i] 
+             << " = " << areaRectangulo << endl;
+    }
+    
+    // ================= 4. CALCULO DE AREAS DE TRIANGULOS EQUILATEROS =================
+    cout << "\n================================================================================" << endl;
+    cout << "         CALCULO DE LAS AREAS DE LOS TRIANGULOS EQUILATEROS" << endl;
+    cout << "                    (lado = numero)" << endl;
+    cout << "================================================================================" << endl;
+    cout << "Formula: Area = (√3 / 4) * lado^2" << endl;
+    cout << "--------------------------------------------------------" << endl;
+    
+    for (i = 0; i < n; i++) {
+        areaTriangulo = (sqrt(3.0) / 4.0) * arreglo[i] * arreglo[i];
+        cout << "Triangulo " << i+1 << ": lado = " << arreglo[i] 
+             << " -> Area = (√3/4) * (" << arreglo[i] << ")^2 = " << areaTriangulo << endl;
+    }
+    
+    // ================= RESUMEN FINAL =================
+    cout << "\n================================================================================" << endl;
+    cout << "                         RESUMEN DE CALCULOS REALIZADOS" << endl;
+    cout << "================================================================================" << endl;
+    cout << "Total de datos procesados: " << n << endl;
+    cout << "Areas de circulos calculadas: " << n << endl;
+    cout << "Areas de cuadrados calculadas: " << n << endl;
+    cout << "Areas de rectangulos calculadas: " << n << endl;
+    cout << "Areas de triangulos equilateros calculadas: " << n << endl;
+    cout << "================================================================================" << endl;
+    
     return (0);
 }
 
@@ -741,7 +779,7 @@ int main() {
 
         case (3):  // Impresion numeros
             if (hayDatos == 0) {
-                cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
+                cout << "\n*** ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. ***\n";
             } else {
                 impresionNumeros();
             }
@@ -753,10 +791,10 @@ int main() {
 
         case (5):  // Busqueda Binaria
             if (hayDatos == 0) {
-                cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
+                cout << "\n*** ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. ***\n";
             } else if (datosOrdenados == 0) {
-                cout << "\n  ERROR: No se puede realizar la busqueda binaria porque los datos no estan ordenados.  \n";
-                cout << "  Primero ordene los datos con cualquier metodo de ordenamiento.  \n";
+                cout << "\n*** ERROR: No se puede realizar la busqueda binaria porque los datos no estan ordenados. ***\n";
+                cout << "*** Primero ordene los datos con cualquier metodo de ordenamiento. ***\n";
             } else {
                 busquedaBin();
             }
@@ -790,8 +828,8 @@ int main() {
             ordenamientoQuick();
             break;
 
-        case (13): // Examen - Identificacion de numeros
-            identificacionCaracteres();
+        case (13): // Calculos Geometricos (Circulos, Cuadrados, Rectangulos, Triangulos)
+            calculosGeometricos();  // NUEVA FUNCION - Reemplaza a identificacionCaracteres()
             break;
 
         case (14): // Guardar archivo
@@ -834,7 +872,7 @@ int menu() {
     cout << "\n10 - Metodo de ordenamiento Shell";
     cout << "\n11 - Metodo de ordenamiento HeapSort";
     cout << "\n12 - Metodo de ordenamiento QuickSort";
-    cout << "\n13 - Examen - Identificacion de numeros";
+    cout << "\n13 - Calculos Geometricos (Circulos, Cuadrados, Rectangulos, Triangulos)";
     cout << "\n14 - Guardar archivo";
     cout << "\n15 - Salir del menu";
     cout << "\nTeclee la opcion deseada : ";

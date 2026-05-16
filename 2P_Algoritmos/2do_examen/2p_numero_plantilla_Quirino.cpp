@@ -32,7 +32,7 @@ int limite_der=0;				//Quick Sort, limite_izq = 0, limite_der = n-1
 clock_t t_ini, t_fin;			//Tiempo
 double secs;					//Tiempo
 string nombreArchivoE;
-string nombreArchivoS = Quirino;
+string nombreArchivoS;
 
 // Banderas
 int hayDatos = 0;        // Bandera para validar si hay datos en el arreglo
@@ -157,10 +157,7 @@ int guardaArchivo() {
         return (0);
     }
 
-    cout << "\nTeclea el nombre del archivo de salida (sin espacios, ni caracteres especiales): ";
-    cin >> nombreArchivoS;
-
-    nombreArchivoS += ".txt";
+    nombreArchivoS = "Quirino.txt";
 
     archivo2 = fopen(nombreArchivoS.c_str(), "w");
 
@@ -172,7 +169,7 @@ int guardaArchivo() {
         cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
     }
 
-    cout << "\n\nGuarda los numeros contenidos en el arreglo en el archivo";
+    cout << "\n\nGuardando los numeros ordenados en el archivo: " << nombreArchivoS;
 
     guardacn = 0;
 
@@ -182,7 +179,7 @@ int guardaArchivo() {
         guardacn++;
     }
 
-    cout << "\n\nTotal de numeros guardados en el segundo archivo son: " << guardacn;
+    cout << "\n\nTotal de numeros guardados en el archivo son: " << guardacn;
     cout << "\n\n";
 
     fclose(archivo2);

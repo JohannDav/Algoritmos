@@ -168,11 +168,7 @@ int guardaArchivo() {
         return (0);
     }
 
-    nombreArchivoS = "Quirino";
-
-    cout << "\nTeclea el nombre del archivo de salida: ";
-    cin >> nombreArchivoS;
-    nombreArchivoS += ".txt";
+    nombreArchivoS = "Quirino.txt";
 
     archivo2 = fopen(nombreArchivoS.c_str(), "w");
 
@@ -184,7 +180,7 @@ int guardaArchivo() {
         cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
     }
 
-    cout << "\n\nGuarda los numeros contenidos en el arreglo en el archivo";
+    cout << "\n\nGuardando los caracteres contenidos en el arreglo en el archivo...";
 
     guardacn = 0;
 
@@ -194,7 +190,7 @@ int guardaArchivo() {
         guardacn++;
     }
 
-    cout << "\n\nTotal de numeros guardados en el segundo archivo son: " << guardacn;
+    cout << "\n\nTotal de caracteres guardados en el archivo \"" << nombreArchivoS << "\" son: " << guardacn;
     cout << "\n\n";
 
     fclose(archivo2);

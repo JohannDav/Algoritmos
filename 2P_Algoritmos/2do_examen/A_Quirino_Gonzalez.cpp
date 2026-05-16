@@ -1,4 +1,4 @@
-// Autor: Quirino González Johann David
+// Autor: AYUDA
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +15,8 @@ int k = 0;  // Variable adicional para bucles
 int l = 0;  // Variable para impresion de pasadas
 int opcion = 0;
 int repeticion = 0;
+int aux_examen; //										EXAMEN
+int aux_contar_letras = 0;//										EXAMEN
 char caracterBuscar;
 char aux;
 char numMayor;  // Variable para flotacion
@@ -71,7 +73,9 @@ void conformar_arbol(char arreglo[], int n);
 void ordenamientoQuick();
 void quickSort(char arreglo[], int limite_izq, int limite_der);
 int identAlfaNumerico();
-int identificacionNumeros();  // Funcion para el examen (ejemplo)
+//												EXAMEN
+int convertirMinuscula();
+int convertirMayuscula();
 
 
 // Declaracion de la estructura que permite leer datos del archivo de entrada y copiarlos a un arreglo
@@ -167,12 +171,8 @@ int guardaArchivo() {
         cout << "  Primero ordene los datos con cualquier metodo de ordenamiento.  \n";
         return (0);
     }
-
-    nombreArchivoS = "Quirino";
-
-    cout << "\nTeclea el nombre del archivo de salida: ";
-    cin >> nombreArchivoS;
-    nombreArchivoS += ".txt";
+    
+    nombreArchivoS = "AYUDA.txt";
 
     archivo2 = fopen(nombreArchivoS.c_str(), "w");
 
@@ -184,7 +184,7 @@ int guardaArchivo() {
         cout << "\nSe abrio el archivo  " << nombreArchivoS.c_str() << "  correctamente\n";
     }
 
-    cout << "\n\nGuarda los numeros contenidos en el arreglo en el archivo";
+    cout << "\n\nGuardando los caracteres contenidos en el arreglo en el archivo...";
 
     guardacn = 0;
 
@@ -194,7 +194,7 @@ int guardaArchivo() {
         guardacn++;
     }
 
-    cout << "\n\nTotal de numeros guardados en el segundo archivo son: " << guardacn;
+    cout << "\n\nTotal de caracteres guardados en el archivo \"" << nombreArchivoS << "\" son: " << guardacn;
     cout << "\n\n";
 
     fclose(archivo2);
@@ -699,42 +699,47 @@ int identAlfaNumerico() {
 }
 
 
-// ================= Funcion para el Examen (Ejemplo: Identificacion de numeros) =================
+//										 ================= Funcion para el Examen =================
 
-int identificacionNumeros() {
-    // Validacion: No se puede identificar si no hay datos
-    if (hayDatos == 0) {
-        cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
-        return (0);
-    }
+int convertirMinuscula() {
+	aux_contar_letras = 0;
+	cout << "\nConvirtiendo caracter por caracter a minuscula:\n";
+	cout << "Arreglo original: ";
+	for (i = 0; i < n; i++) {
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\nArreglo convertido: ";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= 'A' && arreglo[i] <= 'Z') {
+			arreglo[i] = arreglo[i] + 32;
+			aux_contar_letras = aux_contar_letras + 1;
+		}
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\nNumero de letras cambiadas: " << aux_contar_letras;
+	cout << "\n";
+	return (0);
+}
 
-    cout << "\n=== EXAMEN - IDENTIFICACION DE CARACTERES ===\n";
-    cout << "Identificando si los caracteres son numeros (digitos) o no:\n";
-    cout << "\n--- CONTENIDO DEL ARREGLO ---";
-    impresionCaracteres();
-    cout << "\n";
-
-    int contadorNumeros = 0;
-    int contadorNoNumeros = 0;
-
-    for (i = 0; i < n; i++) {
-        if (arreglo[i] >= '0' && arreglo[i] <= '9') {
-            cout << "El caracter '" << arreglo[i] << "' ES un numero (digito)\n";
-            contadorNumeros++;
-        }
-        else {
-            cout << "El caracter '" << arreglo[i] << "' NO es un numero\n";
-            contadorNoNumeros++;
-        }
-    }
-
-    cout << "\n--- RESUMEN ---";
-    cout << "\nTotal de numeros (digitos): " << contadorNumeros;
-    cout << "\nTotal de caracteres que no son numeros: " << contadorNoNumeros;
-    cout << "\nTotal de caracteres analizados: " << n;
-    cout << "\n";
-
-    return (0);
+int convertirMayuscula() {
+	aux_contar_letras = 0;
+	cout << "\nConvirtiendo caracter por caracter a mayuscula:\n";
+	cout << "\nArreglo original: ";
+	for (i = 0; i < n; i++) {
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\n";
+	cout << "\nArreglo convertido: ";
+	for (i = 0; i < n; i++) {
+		if (arreglo[i] >= 'a' && arreglo[i] <= 'z') {
+			arreglo[i] = arreglo[i] - 32;
+			aux_contar_letras = aux_contar_letras + 1;
+		}
+		cout << arreglo[i] << "  ";
+	}
+	cout << "\nNumero de letras cambiadas: " << aux_contar_letras;
+	cout << "\n";
+	return (0);
 }
 
 
@@ -814,8 +819,28 @@ int main() {
                 heapSort();
                 break;
 
-            case (13): // Examen - Ejemplo: Identificacion de numeros
-                identificacionNumeros();
+            case (13): // Examen 
+            	aux_examen = 0;
+                cout << "\nIngrese la opcion deseada " << endl;
+                cout << "\n1 - Convertir a mayusculas " << endl;
+                cout << "\n2 - Convertir a minusculas " << endl;
+                cin >> aux_examen;
+                switch (aux_examen){
+                	case (1):
+                		//Convertir a mayuscula
+                		convertirMayuscula();
+                		
+                		break;
+                		
+                	case (2):
+                		convertirMinuscula();
+                		
+                		break;
+                		
+                	default:
+                		cout << "\nOpcion invalida";
+				}
+                
                 break;
 
             case (14): // Guarda archivo de caracteres
@@ -828,7 +853,7 @@ int main() {
                 break;
 
             default:
-                cout << "\nOpcion inválida";
+                cout << "\nOpcion invalida";
         }
 
         cout << endl;
@@ -844,7 +869,7 @@ int main() {
 
 int menu() {
     system("cls");
-    cout << "\n Quirino Gonzalez Johann David";
+    cout << "\n AYUDA";
     cout << "\n\tMenu";
     cout << "\n1 - Captura de caracteres";
     cout << "\n2 - Lee archivo de caracteres";
@@ -858,7 +883,7 @@ int menu() {
     cout << "\n10 - Ordenamiento metodo quick sort";
     cout << "\n11 - Ordenamiento metodo Shell";
     cout << "\n12 - Ordenamiento metodo heapsort";
-    cout << "\n13 - Examen - Ejemplo: Identificacion de numeros";
+    cout << "\n13 - Examen - Convertidor a mayusculas o minusculas y contabilizar las letras convertidas";
     cout << "\n14 - Guarda archivo de caracteres";
     cout << "\n15 - Salir del menu";
     cout << "\nTeclee la opcion deseada : ";
