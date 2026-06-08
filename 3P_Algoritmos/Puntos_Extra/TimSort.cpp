@@ -1,0 +1,271 @@
+// Autores: Edna Martha Miranda Chávez
+// Sergio Fuenlabrada Velázquez
+// Descripción: Timsort con medición de tiempo de ejecución
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <limits>
+#include <chrono>
+
+using namespace std;
+using namespace chrono;
+
+const int RUN = 32;
+int* arreglo = nullptr;
+int tam = 0;
+int opcional = 0;
+bool archivoLeido = false;
+bool archivoOrdenado = false;
+bool archivoGrabado = false;
+bool mensajeCambioOrden = false;
+bool mensajeMerge = false;
+bool mensajelnsertionsort = false;
+bool mensajeTim = false;
+string nombreArchivo;  // <-- CAMBIO: variable para guardar el nombre
+
+int leerEntero() {
+    int valor;
+    while (true) {
+        cin >> valor;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // <-- CORRECCIÓN
+            cout << "Entrada inválida. Ingrese un número entero: ";
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // <-- CORRECCIÓN
+            return valor;
+        }
+    }
+}
+
+void insertionSort(int arr[], int left, int right, bool ascendente) {
+    if (!mensajelnsertionsort) {
+        cout << "Inicio ordenamiento con inserción " << right - left + 1 << " de tamaño del subarreglo\n";
+        mensajelnsertionsort = true;
+    }
+    for (int i = left + 1; i <= right; i++) {
+        int temp = arr[i];
+        int j = i - 1;
+        while (j >= left && ((ascendente && arr[j] > temp) || (!ascendente && arr[j] < temp))) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = temp;
+    }
+}
+
+void merge(int arr[], int l, int m, int r, bool ascendente) {
+    if (!mensajeMerge) {
+        cout << "Inicio ordenamiento con Merge " << r - l + 1 << " tamaño de la división\n";
+        mensajeMerge = true;
+    }
+    int len1 = m - l + 1, len2 = r - m;
+    int* left = new int[len1];
+    int* right = new int[len2];
+    copy(arr + l, arr + m + 1, left);
+    copy(arr + m + 1, arr + r + 1, right);
+    int i = 0, j = 0, k = l;
+    while (i < len1 && j < len2) {
+        if ((ascendente && left[i] <= right[j]) || (!ascendente && left[i] >= right[j])) {  // <-- CORRECCIÓN
+            arr[k++] = left[i++];
+        } else {
+            arr[k++] = right[j++];
+        }
+    }
+    while (i < len1) arr[k++] = left[i++];
+    while (j < len2) arr[k++] = right[j++];
+    delete[] left;
+    delete[] right;
+}
+
+void timSort(int arr[], int n, bool ascendente) {
+    if (!mensajeTim) {
+        cout << "Inicio ordenamiento con TimSort " << RUN << " de tamaño de run \n";
+        mensajeTim = true;
+    }
+
+    auto inicio = high_resolution_clock::now();
+
+    // Paso 1: ordenar bloques con Insertion Sort
+    for (int i = 0; i < n; i += RUN) {
+        insertionSort(arr, i, min(i + RUN - 1, n - 1), ascendente);
+    }
+
+    // Paso 2: fusionar bloques
+    for (int tamBloque = RUN; tamBloque < n; tamBloque *= 2) {
+        for (int izquierda = 0; izquierda < n; izquierda += 2 * tamBloque) {
+            int medio = izquierda + tamBloque - 1;
+            int derecha = min(izquierda + 2 * tamBloque - 1, n - 1);
+            if (medio < derecha) {
+                merge(arr, izquierda, medio, derecha, ascendente);
+            }
+        }
+    }
+
+    auto fin = high_resolution_clock::now();
+    duration<double> duracion = fin - inicio;
+    cout << "Tiempo de ejecución de TimSort: " << duracion.count() << " segundos\n";
+}
+
+void leerArchivo() {
+    if (archivoLeido) {
+        cout << "El archivo ya ha sido leído\n";
+        return;
+    }
+
+    cout << "Ingrese el nombre del archivo sin extensión: ";
+    cin >> ws;
+    getline(cin, nombreArchivo);
+    nombreArchivo += ".txt";
+
+    ifstream archivo(nombreArchivo);
+    if (!archivo.is_open()) {
+        cout << "No se pudo abrir el archivo\n";
+        return;
+    }
+
+    int valor;
+    tam = 0;
+    while (archivo >> valor) tam++;
+
+    if (tam == 0) {
+        cout << "El archivo está vacío\n";
+        archivo.close();
+        return;
+    }
+
+    archivo.clear();
+    archivo.seekg(0);
+
+    delete[] arreglo;
+    arreglo = new int[tam];
+    for (int i = 0; i < tam; i++) {
+        archivo >> arreglo[i];
+    }
+
+    archivo.close();
+    archivoLeido = true;
+    archivoOrdenado = false;
+    archivoGrabado = false;
+    cout << "Archivo leído correctamente. Total de valores: " << tam << endl;
+}
+
+void ordenarTimsort() {
+    if (!archivoLeido) {
+        cout << "Primero debe leer un archivo\n";
+        return;
+    }
+    if (archivoGrabado) {
+        cout << "Archivo ya fue grabado\n";
+        return;
+    }
+    cout << "Seleccione el orden:\n1. Ascendente\n2. Descendente\nOpción: ";
+    int opcion = leerEntero();
+    if (opcion <= 0 || opcion > 2) {
+        cout << "Opción inválida\n";
+        return;
+    }
+    bool asc = (opcion == 1);
+    if (opcional != opcion && mensajeCambioOrden) {  // <-- CORRECCIÓN
+        cout << (asc ? "Cambiando a orden ascendente..." : "Cambiando a orden descendente...") << endl;
+        mensajeCambioOrden = true;
+    }
+    if (opcional == opcion && archivoOrdenado) {
+        cout << "El arreglo ya ha sido ordenado en ese orden\n";
+        return;
+    }
+    opcional = opcion;
+    cout << "Iniciando ordenamiento con Timsort de un arreglo de " << tam << " tamaño\n";
+    timSort(arreglo, tam, asc);
+    archivoOrdenado = true;
+    cout << "Ordenamiento completado exitosamente\n";
+}
+
+void mostrarArreglo() {
+    if (!archivoLeido) {
+        cout << "Primero debe leer un archivo\n";
+        return;
+    }
+    if (archivoGrabado) {
+        cout << "El archivo ya fue guardado\n";  // <-- CORRECCIÓN (agregado \n)
+        return;
+    }
+    cout << "¿Cuántos elementos desea mostrar? ";
+    int elementos = leerEntero();
+    cout << "Contenido del arreglo: ";
+    for (int i = 0; i < elementos && i < tam; i++)
+        cout << arreglo[i] << " ";
+    cout << endl;
+}
+
+void guardarArchivo() {
+    if (!archivoLeido) {
+        cout << "Primero debe leer un archivo\n";
+        return;
+    }
+    if (archivoGrabado) {
+        cout << "Archivo ya grabado\n";
+        return;
+    }
+    if (!archivoOrdenado) {
+        cout << "El arreglo no esta ordenado\n";  // <-- CORRECCIÓN (agregado \n)
+        return;
+    }
+
+    ofstream archivo(nombreArchivo);  // <-- CORRECCIÓN (usa variable global)
+    if (!archivo.is_open()) {
+        cout << "No se pudo crear el archivo\n";
+        return;
+    }
+    for (int i = 0; i < tam; i++)
+        archivo << arreglo[i] << " ";
+    archivo.close();
+    archivoGrabado = true;
+    cout << "Archivo guardado exitosamente como: " << nombreArchivo << endl;
+}
+
+bool salir() {
+    if (!archivoLeido) {
+        cout << "Debe leer un archivo antes de salir\n";
+        return false;
+    }
+    if (!archivoGrabado) {
+        cout << "Debe guardar el archivo antes de salir\n";
+        return false;
+    }
+    delete[] arreglo;
+    return true;
+}
+
+int main() {
+    system("chcp 65001 > nul");
+    setlocale(LC_ALL, "es_MX.UTF-8");
+
+    bool continuar = true;  // <-- CORRECCIÓN
+
+    do {
+        cout << "\nMenú:\n";
+        cout << "1. Leer archivo\n";
+        cout << "2. Ordenar con Timsort\n";
+        cout << "3. Guardar archivo\n";
+        cout << "4. Mostrar arreglo\n";
+        cout << "5. Salir\n";
+        cout << "Seleccione una opción: ";
+
+        int opcion = leerEntero();  // <-- CORRECCIÓN
+
+        switch (opcion) {
+            case 1: leerArchivo(); break;
+            case 2: ordenarTimsort(); break;
+            case 3: guardarArchivo(); break;
+            case 4: mostrarArreglo(); break;
+            case 5: continuar = !salir(); break;  // <-- CORRECCIÓN
+            default: cout << "Opción inválida\n";
+        }
+    } while (continuar);
+
+    return 0;
+}

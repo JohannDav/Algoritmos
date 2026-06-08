@@ -1,0 +1,1 @@
+Búsqueda secuencial es para encontrar datos duplicados
