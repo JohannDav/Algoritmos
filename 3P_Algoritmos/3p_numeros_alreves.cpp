@@ -73,13 +73,6 @@ int masgrande = 0;      // Para HeapSort
 float auxiliar = 0;     // Para HeapSort
 float auxMatriz[1][5];  // Auxiliar para intercambiar filas completas
 
-// ================= Funcion auxiliar para swap de filas =================
-void swapFilas(float fila1[5], float fila2[5]) {
-    for (int idx = 0; idx < 5; idx++) {
-        swap(fila1[idx], fila2[idx]);
-    }
-}
-
 // ================= Funciones para leer entero con validacion =================
 int leerEntero() {
     int valor;
@@ -93,6 +86,28 @@ int leerEntero() {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return valor;
         }
+    }
+}
+
+// ================= Funcion para preguntar orden ascendente/descendente =================
+bool preguntarOrden() {
+    int orden;
+    cout << "\n--- SELECCIONE EL ORDEN DE ORDENAMIENTO ---" << endl;
+    cout << "1. Ascendente (menor a mayor)" << endl;
+    cout << "2. Descendente (mayor a menor)" << endl;
+    cout << "Opcion: ";
+    orden = leerEntero();
+    while (orden != 1 && orden != 2) {
+        cout << "Opcion invalida. Seleccione 1 (Ascendente) o 2 (Descendente): ";
+        orden = leerEntero();
+    }
+    return (orden == 1); // true = ascendente, false = descendente
+}
+
+// ================= Funcion auxiliar para swap de filas =================
+void swapFilas(float fila1[5], float fila2[5]) {
+    for (int idx = 0; idx < 5; idx++) {
+        swap(fila1[idx], fila2[idx]);
     }
 }
 
@@ -592,8 +607,12 @@ bool salirIntrosort() {
 }
 
 // ================= Funcion de comparacion para sort() =================
-bool compararPorID(const float fila1[5], const float fila2[5]) {
+bool compararPorIDAsc(const float fila1[5], const float fila2[5]) {
     return fila1[0] < fila2[0];
+}
+
+bool compararPorIDDesc(const float fila1[5], const float fila2[5]) {
+    return fila1[0] > fila2[0];
 }
 
 // ================= Declaracion de prototipos =================
@@ -612,8 +631,9 @@ int insercion();
 int seleccion();
 int shell();
 int ordenamientoHeapSort();
-void identificar_mayor(float arreglo[][5], int i, int n);
-void conformar_arbol(float arreglo[][5], int n);
+void identificar_mayor(float arreglo[][5], int i, int n, bool ascendente);
+void conformar_arbol(float arreglo[][5], int n, bool ascendente);
+void heapSort(bool ascendente);
 int ordenamientoQuick();
 int identAlfaNumerico();
 int identVotante();
@@ -829,13 +849,22 @@ int burbuja() {
         cout << "\n ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
     for (i = 0; i < n - 1; i++) {
         for (j = i; j < n; j++) {
-            if (arreglo[i][0] > arreglo[j][0]) {
-                swapFilas(arreglo[i], arreglo[j]);
+            if (ascendente) {
+                if (arreglo[i][0] > arreglo[j][0]) {
+                    swapFilas(arreglo[i], arreglo[j]);
+                }
+            } else {
+                if (arreglo[i][0] < arreglo[j][0]) {
+                    swapFilas(arreglo[i], arreglo[j]);
+                }
             }
         }
     }
@@ -856,13 +885,22 @@ int flotacion() {
         cout << "\n ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
     for (i = 0; i < n - 1; i++) {
         for (j = 0; j < n - 1; j++) {
-            if (arreglo[j][0] > arreglo[j + 1][0]) {
-                swapFilas(arreglo[j], arreglo[j + 1]);
+            if (ascendente) {
+                if (arreglo[j][0] > arreglo[j + 1][0]) {
+                    swapFilas(arreglo[j], arreglo[j + 1]);
+                }
+            } else {
+                if (arreglo[j][0] < arreglo[j + 1][0]) {
+                    swapFilas(arreglo[j], arreglo[j + 1]);
+                }
             }
         }
     }
@@ -883,6 +921,9 @@ int insercion() {
         cout << "\n ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
@@ -893,11 +934,20 @@ int insercion() {
             filaKey[k] = arreglo[i][k];
         }
         j = i - 1;
-        while (j >= 0 && arreglo[j][0] > key) {
-            for (k = 0; k < 5; k++) {
-                arreglo[j + 1][k] = arreglo[j][k];
+        if (ascendente) {
+            while (j >= 0 && arreglo[j][0] > key) {
+                for (k = 0; k < 5; k++) {
+                    arreglo[j + 1][k] = arreglo[j][k];
+                }
+                j--;
             }
-            j--;
+        } else {
+            while (j >= 0 && arreglo[j][0] < key) {
+                for (k = 0; k < 5; k++) {
+                    arreglo[j + 1][k] = arreglo[j][k];
+                }
+                j--;
+            }
         }
         for (k = 0; k < 5; k++) {
             arreglo[j + 1][k] = filaKey[k];
@@ -920,18 +970,27 @@ int seleccion() {
         cout << "\n ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
     for (i = 0; i < n - 1; i++) {
-        min_idx = i;
+        int extremo_idx = i;
         for (j = i + 1; j < n; j++) {
-            if (arreglo[min_idx][0] > arreglo[j][0]) {
-                min_idx = j;
+            if (ascendente) {
+                if (arreglo[extremo_idx][0] > arreglo[j][0]) {
+                    extremo_idx = j;
+                }
+            } else {
+                if (arreglo[extremo_idx][0] < arreglo[j][0]) {
+                    extremo_idx = j;
+                }
             }
         }
-        if (min_idx != i) {
-            swapFilas(arreglo[i], arreglo[min_idx]);
+        if (extremo_idx != i) {
+            swapFilas(arreglo[i], arreglo[extremo_idx]);
         }
     }
     t_fin = clock();
@@ -951,6 +1010,9 @@ int shell() {
         cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
@@ -962,11 +1024,20 @@ int shell() {
             for (k = 0; k < 5; k++) {
                 filaTemp[k] = arreglo[i][k];
             }
-            while ((j >= subarreglo) && (arreglo[j - subarreglo][0] > filaTemp[0])) {
-                for (k = 0; k < 5; k++) {
-                    arreglo[j][k] = arreglo[j - subarreglo][k];
+            if (ascendente) {
+                while ((j >= subarreglo) && (arreglo[j - subarreglo][0] > filaTemp[0])) {
+                    for (k = 0; k < 5; k++) {
+                        arreglo[j][k] = arreglo[j - subarreglo][k];
+                    }
+                    j = j - subarreglo;
                 }
-                j = j - subarreglo;
+            } else {
+                while ((j >= subarreglo) && (arreglo[j - subarreglo][0] < filaTemp[0])) {
+                    for (k = 0; k < 5; k++) {
+                        arreglo[j][k] = arreglo[j - subarreglo][k];
+                    }
+                    j = j - subarreglo;
+                }
             }
             for (k = 0; k < 5; k++) {
                 arreglo[j][k] = filaTemp[k];
@@ -986,33 +1057,44 @@ int shell() {
 }
 
 // ================= Metodo HeapSort =================
-void identificar_mayor(float arreglo[][5], int i, int n) {
+void identificar_mayor(float arreglo[][5], int i, int n, bool ascendente) {
     int izquierda, derecha;
     izquierda = 2 * i + 1;
     derecha = 2 * i + 2;
-    if ((izquierda <= n) && (arreglo[izquierda][0] > arreglo[i][0]))
-        masgrande = izquierda;
-    else
-        masgrande = i;
-    if ((derecha <= n) && (arreglo[derecha][0] > arreglo[masgrande][0]))
-        masgrande = derecha;
+    
+    if (ascendente) {
+        if ((izquierda <= n) && (arreglo[izquierda][0] > arreglo[i][0]))
+            masgrande = izquierda;
+        else
+            masgrande = i;
+        if ((derecha <= n) && (arreglo[derecha][0] > arreglo[masgrande][0]))
+            masgrande = derecha;
+    } else {
+        if ((izquierda <= n) && (arreglo[izquierda][0] < arreglo[i][0]))
+            masgrande = izquierda;
+        else
+            masgrande = i;
+        if ((derecha <= n) && (arreglo[derecha][0] < arreglo[masgrande][0]))
+            masgrande = derecha;
+    }
+    
     if (masgrande != i) {
         swapFilas(arreglo[i], arreglo[masgrande]);
-        identificar_mayor(arreglo, masgrande, n);
+        identificar_mayor(arreglo, masgrande, n, ascendente);
     }
 }
 
-void conformar_arbol(float arreglo[][5], int n) {
+void conformar_arbol(float arreglo[][5], int n, bool ascendente) {
     for (int k = n / 2; k >= 0; k--) {
-        identificar_mayor(arreglo, k, n);
+        identificar_mayor(arreglo, k, n, ascendente);
     }
 }
 
-void heapSort() {
-    conformar_arbol(arreglo, n - 1);
+void heapSort(bool ascendente) {
+    conformar_arbol(arreglo, n - 1, ascendente);
     for (i = n - 1; i >= 1; i--) {
         swapFilas(arreglo[i], arreglo[0]);
-        identificar_mayor(arreglo, 0, i - 1);
+        identificar_mayor(arreglo, 0, i - 1, ascendente);
     }
 }
 
@@ -1021,10 +1103,13 @@ int ordenamientoHeapSort() {
         cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
-    heapSort();
+    heapSort(ascendente);
     t_fin = clock();
     cout << "\n--- DESPUES DEL ORDENAMIENTO ---";
     impresionNumeros();
@@ -1042,6 +1127,9 @@ int ordenamientoQuick() {
         cout << "\n  ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo.  \n";
         return (0);
     }
+    
+    bool ascendente = preguntarOrden();
+    
     cout << "\n--- ANTES DEL ORDENAMIENTO ---";
     impresionNumeros();
     t_ini = clock();
@@ -1049,9 +1137,17 @@ int ordenamientoQuick() {
     for (int idx = 0; idx < n; idx++) {
         ptrArreglo[idx] = arreglo[idx];
     }
-    sort(ptrArreglo, ptrArreglo + n, [](const float* a, const float* b) {
-        return a[0] < b[0];
-    });
+    
+    if (ascendente) {
+        sort(ptrArreglo, ptrArreglo + n, [](const float* a, const float* b) {
+            return a[0] < b[0];
+        });
+    } else {
+        sort(ptrArreglo, ptrArreglo + n, [](const float* a, const float* b) {
+            return a[0] > b[0];
+        });
+    }
+    
     float arregloTemp[100][5];
     for (int idx = 0; idx < n; idx++) {
         for (int col = 0; col < 5; col++) {

@@ -5,7 +5,31 @@
 #include <algorithm>
 #include <limits>
 #include <chrono>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <vector>      // Para vectores auxiliares
+#include <limits>      // Para numeric_limits
 
+// ================= Declaracion de variables globales =================
+int i = 0;
+int j = 0;
+int k = 0;
+int l = 0;
+int n = 0;
+int cn = 0;
+int guardacn = 0;
+int banderaEncontro = 0;
+int aux = 0;
+int aux_num = 0;
+int yaOrdenados = 0;
+int numeroBuscar;
+float arreglo2[100];    // Arreglo auxiliar
+clock_t t_ini, t_fin;           //Tiempo
+double secs;                    //Tiempo
+// Banderas
+int hayDatos = 0;        // Bandera para validar si hay datos en el arreglo
+int datosOrdenados = 0;  // Bandera para validar si los datos estan ordenados
 using namespace std;
 using namespace chrono;
 
@@ -15,6 +39,7 @@ int tam = 0;
 int opcional = 0;
 int opcion = 0;
 int repeticion = 0;
+int menu();
 bool archivoLeido = false;
 bool archivoOrdenado = false;
 bool archivoGrabado = false;
@@ -140,6 +165,7 @@ void ordenarTimsort() {
     timSort(arreglo, tam, asc);
     archivoOrdenado = true;
     cout << "Ordenamiento completado exitosamente\n";
+    yaOrdenados = 1;
 }
 
 void leerArchivo() {
@@ -183,6 +209,7 @@ void leerArchivo() {
     archivoGrabado = false;
 
     cout << "Archivo leído correctamente. Total de valores: " << tam << endl;
+    hayDatos = 1;
 }
 
 void mostrarArreglo() {
@@ -199,6 +226,13 @@ void mostrarArreglo() {
     cout << "Contenido del arreglo: ";
     for (int i = 0; i < elementos && i < tam; i++) cout << arreglo[i] << " ";
     cout << endl;
+}
+
+int mostrarTodo() {
+    cout << "Contenido del arreglo: ";
+    for (int i = 0; i < tam; i++) cout << arreglo[i] << " ";
+    cout << endl;
+    return (0);
 }
 
 void guardarArchivo() {
@@ -255,6 +289,51 @@ int mostrarPositivosNegativos() {
     return 0;
 }
 
+// ================= Busqueda Secuencial =================
+int busquedaNumeros() {
+    if (hayDatos == 0) {
+        cout << "\n ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. \n";
+        return (0);
+    }
+    if(yaOrdenados == 0){
+    	cout << "\n ERROR: Primero ordena \n";
+        return (0);
+	}
+    banderaEncontro = 0;
+    cout<<"\nTeclee el numero a buscar : ";
+    cin>>numeroBuscar;
+    for (i=0; i<tam; i++){
+        if (numeroBuscar == arreglo [i]){
+            cout<<"\nNumero encontrado en la posicion "<<i+1;
+            banderaEncontro = 1;
+        }
+    }
+    if (banderaEncontro == 0){
+        cout<<"\nNumero no encontrado en el arreglo ";
+    }
+    
+    return (0);        
+
+}
+
+int impuestos(){
+	for (i=0; i<tam; i++){
+        if(arreglo [i] < 9451){
+        	cout << "\nEl sueldo neto es de: " << arreglo [i];
+        	cout << "\nNO PAGA IMPUESTOS" << endl;
+        	cout << "\nSu sueldo neto es de: " << arreglo [i];
+		}
+		if((arreglo [i] >= 9452) && (arreglo [i] <= 9451)){
+        	cout << "\nEl sueldo neto es de: " << arreglo [i];
+        	cout << "\nPAGA UN 10%" << endl;
+        	cout << "\nSu sueldo neto es de: " << (arreglo [i] * 0.10);
+		}
+    }
+	
+	
+	return(0);
+}
+
 // ================= MAIN =================
 int main() {
     system("chcp 65001 > nul");
@@ -263,12 +342,33 @@ int main() {
     for (repeticion = 0; repeticion == 0;) {
         menu();
         switch (opcion) {
-            case 1: leerArchivo(); break;
-            case 2: ordenarTimsort(); break;
-            case 3: guardarArchivo(); break;
-            case 4: mostrarArreglo(); break;
-            case 5: mostrarPositivosNegativos(); break;
-            case 6: cout << "\nHasta luego"; repeticion++; break;
+            case 1: 
+				leerArchivo(); 
+				break;
+            case 2:
+            	//Esto debe de mostrar todo
+				mostrarTodo();
+				break;
+            case 3:
+            	mostrarArreglo();                       	
+				break;
+            case 4: 
+				busquedaNumeros();
+				break;
+            case 5: 
+				ordenarTimsort();
+				break;
+            case 6: 
+            	impuestos();
+				break;
+			case 7: 
+				guardarArchivo();
+				break;
+			case 8: 
+				cout << "\nHasta luego"; 
+				repeticion++; 
+				break;
+				break;
             default: cout << "\nOpcion invalida";
         }
         if (repeticion) break;
@@ -283,14 +383,16 @@ int main() {
 // ================= MENU PRINCIPAL =================
 int menu() {
     system("cls");
-    cout << "\n Quirino Gonzalez Johann David - TIMSORT";
+    cout << "\n Quirino Gonzalez Johann David";
     cout << "\n\tMenu";
     cout << "\n1 - Leer archivo";
-    cout << "\n2 - Ordenar con Timsort";
-    cout << "\n3 - Guardar archivo";
-    cout << "\n4 - Mostrar arreglo";
-    cout << "\n5 - Mostrar numeros negativos y positivos";
-    cout << "\n6 - Salir";
+    cout << "\n2 - Imprimir archivo";
+    cout << "\n3 - Mostrar arreglo";
+    cout << "\n4 - Busqueda Secuencial";
+    cout << "\n5 - Ordenamiento TimSort";
+    cout << "\n6 - Calculo de pago de impuestos";
+    cout << "\n7 - Guardar archivo";	        
+    cout << "\n8 - Salir";
     cout << "\nTeclee la opcion deseada : ";
     cin >> opcion;
     return 0;

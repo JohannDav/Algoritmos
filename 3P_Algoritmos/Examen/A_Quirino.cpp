@@ -14,7 +14,13 @@ int* arreglo = nullptr;
 int tam = 0;
 int opcional = 0;
 int opcion = 0;
+int i = 0, n = 0;
 int repeticion = 0;
+int banderaEncontro = 0;
+int numeroBuscar = 0;
+int menu();
+clock_t t_ini, t_fin;           //Tiempo
+double secs;                    //Tiempo
 bool archivoLeido = false;
 bool archivoOrdenado = false;
 bool archivoGrabado = false;
@@ -255,6 +261,33 @@ int mostrarPositivosNegativos() {
     return 0;
 }
 
+// Busqueda secuencial
+int busquedaNumeros() {
+    banderaEncontro = 0;
+    cout << "\n--- ANTES DE LA BUSQUEDA ---";
+    mostrarArreglo();
+    cout << "\nTeclee el ID a buscar : ";
+    cin >> numeroBuscar;
+    t_ini = clock();
+    for (i = 0; i < n; i++) {
+        if (numeroBuscar == arreglo[i][0]) {
+            cout << "\nID encontrado en la posicion " << i + 1;
+            banderaEncontro = 1;
+        }
+    }
+    t_fin = clock();
+    if (banderaEncontro == 0) {
+        cout << "\nID no encontrado en el arreglo ";
+    }
+    cout << "\n\n--- DESPUES DE LA BUSQUEDA ---";
+    impresionNumeros();
+    cout << "\n\n Tiempo de busqueda secuencial:  ";
+    secs = (double)(t_fin - t_ini) / (double)CLOCKS_PER_SEC;
+    printf("%.16g milisegundos", secs * 1000.0);
+    cout << "\n";
+    return (0);
+}
+
 // ================= MAIN =================
 int main() {
     system("chcp 65001 > nul");
@@ -263,12 +296,26 @@ int main() {
     for (repeticion = 0; repeticion == 0;) {
         menu();
         switch (opcion) {
-            case 1: leerArchivo(); break;
-            case 2: ordenarTimsort(); break;
-            case 3: guardarArchivo(); break;
-            case 4: mostrarArreglo(); break;
-            case 5: mostrarPositivosNegativos(); break;
-            case 6: cout << "\nHasta luego"; repeticion++; break;
+            case 1: 
+				leerArchivo(); 
+				break;
+            case 2: 
+				mostrarArreglo();
+				break;
+            case 3:
+            	mostrarArreglo();
+				//guardarArchivo(); 
+				break;
+            case 4: 
+				//mostrarArreglo(); 
+				break;
+            case 5: 
+				mostrarPositivosNegativos(); 
+				break;
+            case 6: 
+				cout << "\nHasta luego"; 
+				repeticion++; 
+				break;
             default: cout << "\nOpcion invalida";
         }
         if (repeticion) break;
@@ -283,7 +330,20 @@ int main() {
 // ================= MENU PRINCIPAL =================
 int menu() {
     system("cls");
-    cout << "\n Quirino Gonzalez Johann David - TIMSORT";
+    cout << "\n Quirino Gonzalez Johann David";
+    cout << "\n\tMenu";
+    cout << "\n1 - Leer archivo";
+    cout << "\n2 - Imprimir archivo";
+    cout << "\n3 - Mostrar arreglo";
+    cout << "\n4 - Busqueda Secuencial";
+    cout << "\n5 - Ordenamiento TimSort";
+    cout << "\n6 - Calculo de pago de impuestos";
+    cout << "\n7 - Guardar archivo";
+    cout << "\n8 - Salir";
+    cout << "\nTeclee la opcion deseada : ";
+    
+	/*
+    cout << "\n Quirino Gonzalez Johann David";
     cout << "\n\tMenu";
     cout << "\n1 - Leer archivo";
     cout << "\n2 - Ordenar con Timsort";
@@ -292,6 +352,7 @@ int menu() {
     cout << "\n5 - Mostrar numeros negativos y positivos";
     cout << "\n6 - Salir";
     cout << "\nTeclee la opcion deseada : ";
+    */
     cin >> opcion;
     return 0;
 }

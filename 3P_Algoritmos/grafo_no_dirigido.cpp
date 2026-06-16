@@ -72,7 +72,7 @@ using namespace std;
 //
 //   - Para ayudar a que comprenda el proceso, se agrego la ruta de A a otro nodo, con el nuevo arco o arista de C a D, que su peso es 4 
 
-string tabAdyacencias [80][14] = {
+string tabAdyacencias [150][14] = {
     //                Nodo       Nodo       Nodo       Nodo       Nodo     Total  Total
     //     Ruta     peso/orden peso/orden peso/orden peso/orden peso/orden Nodos  Peso
     //   Ini  Fin      A           B          C          D          E     Tocados Ruta      
@@ -158,21 +158,28 @@ string tabAdyacencias [80][14] = {
     {"D","E",   "5","2",   "6","1",   "6","3",   " "," ",   "7","4",   "4",   "24"},
 
 
-    //   Ini  Fin      A           B          C          D          E     Nodos  Total        
+//   Ini  Fin      A           B          C          D          E     Nodos  Total        
     {"E","A",   "6","2",   " "," ",   "7","1",   " "," ",   " "," ",   "2",   "13"},
     {"E","A",   "5","3",   "5","2",   "7","1",   " "," ",   " "," ",   "3",   "17"},
     {"E","A",   "5","3",   "6","2",   " "," ",   "8","1",   " "," ",   "3",   "19"},
-    
+//   Ini  Fin      A           B          C          D          E     Nodos  Total 
     {"E","B",   " "," ",   "5","2",   "7","1",   " "," ",   " "," ",   "2",   "12"},
     {"E","B",   " "," ",   "6","2",   " "," ",   " "," ",   "8","1",   "2",   "14"},
     {"E","B",   "6","2",   "5","3",   "7","1",   " "," ",   " "," ",   "3",   "18"},
-    
+//   Ini  Fin      A           B          C          D          E     Nodos  Total     
     {"E","C",   " "," ",   " "," ",   "7","1",   " "," ",   " "," ",   "1",   "7"},
     {"E","C",   " "," ",   "6","2",   "5","3",   " "," ",   "8","1",   "3",   "19"},
     {"E","C",   "5","2",   "6","3",   "6","4",   " "," ",   "8","1",   "4",   "25"},
-    
+//   Ini  Fin      A           B          C          D          E     Nodos  Total 
     {"E","D",   " "," ",   " "," ",   " "," ",   "8","1",   " "," ",   "1",   "8"},
     {"E","D",   " "," ",   "5","2",   "7","1",   "6","3",   " "," ",   "3",   "18"},
+    
+    // GRAFO PARA EXAMEN 
+    //La primer comilla es el peso creo y la otra es el paso en el que vas jajaj
+    {"E","D",   " "," ",   "","",   "7","1",   "17","2",   " "," ",   "3",   "24"}, //c A d
+
+	//ES EL DE ARRIBA
+
     {"E","D",   "6","2",   "5","3",   "7","1",   "6","4",   " "," ",   "4",   "24"},
 };
 

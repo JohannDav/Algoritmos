@@ -15,6 +15,7 @@ int tam = 0;
 int opcional = 0;
 int opcion = 0;
 int repeticion = 0;
+int menu();
 bool archivoLeido = false;
 bool archivoOrdenado = false;
 bool archivoGrabado = false;
