@@ -1,4 +1,4 @@
- #include <iostream>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <cmath>
@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <vector>      // Para vectores auxiliares
-#include <limits>      // Para numeric_limits
+#include <vector>
+#include <limits>
 
 // ================= Declaracion de variables globales =================
 int i = 0;
@@ -24,16 +24,14 @@ int aux = 0;
 int aux_num = 0;
 int yaOrdenados = 0;
 int numeroBuscar;
-float arreglo2[100];    // Arreglo auxiliar
-clock_t t_ini, t_fin;           //Tiempo
-double secs;                    //Tiempo
-// Banderas
-int hayDatos = 0;        // Bandera para validar si hay datos en el arreglo
-int datosOrdenados = 0;  // Bandera para validar si los datos estan ordenados
+float arreglo2[100];
+clock_t t_ini, t_fin;
+double secs;
+int hayDatos = 0;
+int datosOrdenados = 0;
 using namespace std;
 using namespace chrono;
 
-const int RUN = 32;
 int* arreglo = nullptr;
 int tam = 0;
 int opcional = 0;
@@ -44,9 +42,8 @@ bool archivoLeido = false;
 bool archivoOrdenado = false;
 bool archivoGrabado = false;
 bool mensajeCambioOrden = false;
-bool mensajeMerge = false;
-bool mensajElnsertionsort = false;
-bool mensajeTim = false;
+bool mensajeHeapsort = false;
+bool mensajelInsertionsort = false;
 
 int leerEntero() {
     int valor;
@@ -64,9 +61,9 @@ int leerEntero() {
 }
 
 void insertionSort(int arr[], int left, int right, bool ascendente) {
-    if (!mensajElnsertionsort) {
-        cout << "Inicio ordenamiento con inserción " << right - left << " de tamaño del subarreglo\n";
-        mensajElnsertionsort = true;
+    if (!mensajelInsertionsort) {
+        cout << "Se activa Insertion Sort para subarreglo pequeño (" << right - left + 1 << " elementos)\n";
+        mensajelInsertionsort = true;
     }
     for (int i = left + 1; i <= right; i++) {
         int temp = arr[i];
@@ -79,59 +76,77 @@ void insertionSort(int arr[], int left, int right, bool ascendente) {
     }
 }
 
-void merge(int arr[], int l, int m, int r, bool ascendente) {
-    if (!mensajeMerge) {
-        cout << "Inicio ordenamiento con Merge " << r - l << " tamaño de la división\n";
-        mensajeMerge = true;
+void heapify(int arr[], int n, int i, bool ascendente) {
+    int extremo = i;
+    int izquierda = 2 * i + 1;
+    int derecha = 2 * i + 2;
+    if (ascendente) {
+        if (izquierda < n && arr[izquierda] > arr[extremo]) extremo = izquierda;
+        if (derecha < n && arr[derecha] > arr[extremo]) extremo = derecha;
+    } else {
+        if (izquierda < n && arr[izquierda] < arr[extremo]) extremo = izquierda;
+        if (derecha < n && arr[derecha] < arr[extremo]) extremo = derecha;
     }
+    if (extremo != i) {
+        swap(arr[i], arr[extremo]);
+        heapify(arr, n, extremo, ascendente);
+    }
+}
 
-    int len1 = m - l + 1, len2 = r - m;
-    int* left = new int[len1];
-    int* right = new int[len2];
+void heapSort(int arr[], int n, bool ascendente) {
+    if (!mensajeHeapsort) {
+        cout << "Se activa Heapsort debido a profundidad excesiva en QuickSort\n";
+        mensajeHeapsort = true;
+    }
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i, ascendente);
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0, ascendente);
+    }
+}
 
-    copy(arr + l, arr + m + 1, left);
-    copy(arr + m + 1, arr + r + 1, right);
-
-    int i = 0, j = 0, k = l;
-    while (i < len1 && j < len2) {
-        if ((ascendente && left[i] <= right[j]) || (!ascendente && left[i] >= right[j])) {
-            arr[k++] = left[i++];
+void introsortUtil(int arr[], int izquierda, int derecha, int profundidadMax, bool ascendente) {
+    int n = derecha - izquierda + 1;
+    if (n <= 16) {
+        insertionSort(arr, izquierda, derecha, ascendente);
+        return;
+    }
+    if (profundidadMax == 0) {
+        heapSort(arr + izquierda, n, ascendente);
+        return;
+    }
+    int pivote = arr[izquierda + (derecha - izquierda) / 2];
+    int i = izquierda, j = derecha;
+    while (i <= j) {
+        if (ascendente) {
+            while (arr[i] < pivote) i++;
+            while (arr[j] > pivote) j--;
         } else {
-            arr[k++] = right[j++];
+            while (arr[i] > pivote) i++;
+            while (arr[j] < pivote) j--;
+        }
+        if (i <= j) {
+            swap(arr[i], arr[j]);
+            i++;
+            j--;
         }
     }
-    while (i < len1) arr[k++] = left[i++];
-    while (j < len2) arr[k++] = right[j++];
-
-    delete[] left;
-    delete[] right;
+    if (izquierda < j)
+        introsortUtil(arr, izquierda, j, profundidadMax - 1, ascendente);
+    if (i < derecha)
+        introsortUtil(arr, i, derecha, profundidadMax - 1, ascendente);
 }
 
-void timSort(int arr[], int n, bool ascendente) {
-    if (!mensajeTim) {
-        cout << "Inicio ordenamiento con TimSort " << RUN << " de tamaño de run \n";
-        mensajeTim = true;
-    }
-
-    auto inicio = high_resolution_clock::now();
-
-    for (int i = 0; i < n; i += RUN)
-        insertionSort(arr, i, min(i + RUN - 1, n - 1), ascendente);
-
-    for (int size = RUN; size < n; size *= 2) {
-        for (int left = 0; left < n; left += 2 * size) {
-            int mid = left + size - 1;
-            int right = min(left + 2 * size - 1, n - 1);
-            if (mid < right) merge(arr, left, mid, right, ascendente);
-        }
-    }
-
-    auto fin = high_resolution_clock::now();
-    duration<double> duracion = fin - inicio;
-    cout << "Tiempo de ejecucion de TimSort: " << duracion.count() << " segundos\n";
+void introsort(int arr[], int n, bool ascendente) {
+    mensajeHeapsort = false;
+    mensajelInsertionsort = false;
+    int profundidadMax = 2 * log(n);
+    cout << "Comienza Introsort con profundidad máxima permitida: " << profundidadMax << "\n";
+    introsortUtil(arr, 0, n - 1, profundidadMax, ascendente);
 }
 
-void ordenarTimsort() {
+void ordenarIntrosort() {
     if (!archivoLeido) {
         cout << "Primero debe leer un archivo\n";
         return;
@@ -161,8 +176,8 @@ void ordenarTimsort() {
     }
 
     opcional = opcionOrden;
-    cout << "Iniciando ordenamiento con Timsort de un arreglo de " << tam << " tamaño\n";
-    timSort(arreglo, tam, asc);
+    cout << "Iniciando ordenamiento con Introsort de un arreglo de " << tam << " tamaño\n";
+    introsort(arreglo, tam, asc);
     archivoOrdenado = true;
     cout << "Ordenamiento completado exitosamente\n";
     yaOrdenados = 1;
@@ -289,37 +304,32 @@ int mostrarPositivosNegativos() {
     return 0;
 }
 
-// ================= Busqueda Secuencial =================
 int busquedaNumeros() {
     if (hayDatos == 0) {
         cout << "\n ERROR: No hay datos en el arreglo. Primero capture datos o lea un archivo. \n";
         return (0);
     }
     if(yaOrdenados == 0){
-    	cout << "\n ERROR: Primero ordena \n";
+        cout << "\n ERROR: Primero ordena \n";
         return (0);
-	}
+    }
     banderaEncontro = 0;
-    cout<<"\nTeclee el numero a buscar : ";
-    cin>>numeroBuscar;
-    for (i=0; i<tam; i++){
-        if (numeroBuscar == arreglo [i]){
-            cout<<"\nNumero encontrado en la posicion "<<i+1;
+    cout << "\nTeclee el numero a buscar : ";
+    cin >> numeroBuscar;
+    for (i = 0; i < tam; i++){
+        if (numeroBuscar == arreglo[i]){
+            cout << "\nNumero encontrado en la posicion " << i + 1;
             banderaEncontro = 1;
         }
     }
     if (banderaEncontro == 0){
-        cout<<"\nNumero no encontrado en el arreglo ";
+        cout << "\nNumero no encontrado en el arreglo ";
     }
-    
-    return (0);        
-
+    return (0);
 }
 
 int examen(){
-	
-	
-	return(0);
+    return (0);
 }
 
 // ================= MAIN =================
@@ -330,34 +340,33 @@ int main() {
     for (repeticion = 0; repeticion == 0;) {
         menu();
         switch (opcion) {
-            case 1: 
-				leerArchivo(); 
-				break;
+            case 1:
+                leerArchivo();
+                break;
             case 2:
-            	//Esto debe de mostrar todo
-				mostrarTodo();
-				break;
+                mostrarTodo();
+                break;
             case 3:
-            	mostrarArreglo();                       	
-				break;
-            case 4: 
-				busquedaNumeros();
-				break;
-            case 5: 
-				ordenarTimsort();
-				break;
-            case 6: 
-            	examen();
-				break;
-			case 7: 
-				guardarArchivo();
-				break;
-			case 8: 
-				cout << "\nHasta luego"; 
-				repeticion++; 
-				break;
-				break;
-            default: cout << "\nOpcion invalida";
+                mostrarArreglo();
+                break;
+            case 4:
+                busquedaNumeros();
+                break;
+            case 5:
+                ordenarIntrosort();
+                break;
+            case 6:
+                examen();
+                break;
+            case 7:
+                guardarArchivo();
+                break;
+            case 8:
+                cout << "\nHasta luego";
+                repeticion++;
+                break;
+            default:
+                cout << "\nOpcion invalida";
         }
         if (repeticion) break;
         cout << endl;
@@ -377,9 +386,9 @@ int menu() {
     cout << "\n2 - Imprimir archivo";
     cout << "\n3 - Mostrar arreglo";
     cout << "\n4 - Busqueda Secuencial";
-    cout << "\n5 - Ordenamiento TimSort";
+    cout << "\n5 - Ordenamiento Introsort";
     cout << "\n6 - Opcion examen";
-    cout << "\n7 - Guardar archivo";	        
+    cout << "\n7 - Guardar archivo";
     cout << "\n8 - Salir";
     cout << "\nTeclee la opcion deseada : ";
     cin >> opcion;
